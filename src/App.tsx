@@ -14,10 +14,18 @@ const sectionIds = ['inicio', 'projetos', 'experiencia', 'sobre', 'formacao', 'c
 export default function App() {
   const active = useActiveSection(sectionIds)
 
-  // Links diretos (ex.: /#projetos/rag) chegam antes do React renderizar; rola até a seção depois.
+  // Links diretos (ex.: /#projetos/rag): o navegador não acha o id "projetos/rag", então rolamos até a
+  // seção ao carregar e quando um hash com aba chega sem recarregar a página.
   useEffect(() => {
-    const id = decodeURIComponent(window.location.hash.slice(1)).split('/')[0]
-    if (id) document.getElementById(id)?.scrollIntoView()
+    const scrollToHash = (tabOnly: boolean) => {
+      const hash = decodeURIComponent(window.location.hash.slice(1))
+      if (!hash || (tabOnly && !hash.includes('/'))) return
+      document.getElementById(hash.split('/')[0])?.scrollIntoView()
+    }
+    const onHash = () => scrollToHash(true)
+    scrollToHash(false)
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
   }, [])
 
   return (
