@@ -1,0 +1,52 @@
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: color-mix(in srgb, var(--bg-page) 88%, transparent);
+  backdrop-filter: saturate(1.2) blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.topbar-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding-inline: clamp(1.25rem, 4vw, 3rem);
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+.brand {
+  margin-right: auto;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 1.25rem;
+  text-decoration: none;
+}
+.topnav {
+  display: flex;
+  gap: 0.25rem;
+}
+.topnav a {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  text-underline-offset: 6px;
+}
+.topnav a:hover {
+  color: var(--text-primary);
+  background: var(--tint);
+}
+.topnav a.is-active {
+  color: var(--text-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+}
+@media (max-width: 639px) {
+  .topnav {
+    display: none;
+  }
+}

@@ -4,11 +4,7 @@ import { Section } from './Section'
 export function About() {
   return (
     <Section id="sobre" title="Sobre">
-      <div className="prose">
-        {profile.about.map((p) => (
-          <p key={p.slice(0, 20)}>{p}</p>
-        ))}
-      </div>
+      <p className="prose">{profile.about}</p>
 
       <dl className="skills">
         {skills.map((s) => (
