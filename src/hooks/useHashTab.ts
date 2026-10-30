@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
+import { readHash } from '../lib/hash'
 
 function parse(section: string): string | null {
-  const [head, slug] = decodeURIComponent(window.location.hash.slice(1)).split('/')
+  const [head, slug] = readHash().split('/')
   return head === section && slug ? slug : null
 }
 

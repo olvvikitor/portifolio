@@ -23,6 +23,11 @@ describe('useHashTab', () => {
     expect(renderHook(() => useHashTab('projetos', slugs)).result.current[0]).toBe('motionfy')
   })
 
+  it('hash malformado não derruba a página', () => {
+    window.history.replaceState(null, '', '/#projetos/%E0')
+    expect(renderHook(() => useHashTab('projetos', slugs)).result.current[0]).toBe('motionfy')
+  })
+
   it('select atualiza estado e URL', () => {
     const { result } = renderHook(() => useHashTab('projetos', slugs))
     act(() => result.current[1]('dr-autoparts'))

@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { projects } from './data/profile'
+import { readHash } from './lib/hash'
 import { useActiveSection } from './hooks/useActiveSection'
 import { TopBar } from './components/TopBar'
 import { Hero } from './components/Hero'
@@ -18,7 +19,7 @@ export default function App() {
   // seção ao carregar e quando um hash com aba chega sem recarregar a página.
   useEffect(() => {
     const scrollToHash = (tabOnly: boolean) => {
-      const hash = decodeURIComponent(window.location.hash.slice(1))
+      const hash = readHash()
       if (!hash || (tabOnly && !hash.includes('/'))) return
       document.getElementById(hash.split('/')[0])?.scrollIntoView()
     }
