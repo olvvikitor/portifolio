@@ -1,4 +1,5 @@
-/* ---------- Índice ---------- */
+/* ---------- Índice (abas) ---------- */
+/* Cada linha é uma aba: clicar mostra o projeto embaixo. O selecionado fica com fundo (--tint-strong). */
 .index {
   margin-bottom: 1rem;
 }
@@ -14,24 +15,42 @@
     column-gap: 3rem;
   }
 }
-.index-list li {
-  border-bottom: 1px solid var(--border);
-}
-.index-list a {
+.index-list button {
   display: flex;
   align-items: center;
   gap: 1rem;
+  width: 100%;
   min-height: 48px;
-  text-decoration: none;
+  padding: 0 0.75rem;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
   transition: background-color 0.15s ease;
 }
-.index-list a:hover {
+.index-list button:hover {
   background: var(--tint);
 }
-.index-list a:hover .index-name {
+.index-list button:hover .index-name {
   text-decoration: underline;
   text-underline-offset: 4px;
   text-decoration-color: var(--border-medium);
+}
+.index-list button[aria-selected='true'] {
+  background: var(--tint-strong);
+  cursor: default;
+}
+.index-list button[aria-selected='true'] .index-name {
+  font-weight: 600;
+  text-decoration: none;
+}
+.index-list button:focus-visible {
+  outline: 2px solid var(--text-primary);
+  outline-offset: -2px;
 }
 .index-num {
   width: 1.5rem;
@@ -51,8 +70,23 @@
 }
 
 /* ---------- Projetos ---------- */
+/* Setas entre projetos: anterior / contador / próximo, logo acima do projeto aberto. */
+.project-nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-bottom: 1rem;
+}
+.project-count {
+  min-width: 5ch;
+  text-align: center;
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
 .projects {
-  margin-top: 3rem;
+  margin-top: 2rem;
 }
 .project {
   display: grid;

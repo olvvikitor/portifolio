@@ -47,7 +47,7 @@ export const profile: {
   specialties: 'Crio sistemas web completos e uso inteligência artificial para resolver problemas reais.',
   available: true,
   about:
-    'Gosto de pegar uma tarefa repetitiva ou confusa do dia a dia e transformar em algo que funciona sozinho. Penso no sistema inteiro, do dado que entra à tela que a pessoa usa, e hoje estudo arquitetura de sistemas para construir coisas que aguentem crescer.',
+    'Desenvolvo software para processos que hoje dependem de esforço manual, retrabalho ou conhecimento concentrado em poucas pessoas. Atuo no sistema como um todo, da modelagem e integração dos dados ao backend e à interface usada no dia a dia, com foco em arquitetura que sustenta crescimento e mudança.',
   email: 'victoroloveira.3002@gmail.com',
   links: [
     { label: 'GitHub', href: 'https://github.com/olvvikitor' },
@@ -95,16 +95,16 @@ export const capabilities: Capability[] = [
 // "Como eu trabalho" (seção Sobre): forma de pensar, sem citar projeto específico. Linguagem simples.
 export const principles: { title: string; text: string }[] = [
   {
-    title: 'Melhor admitir que não sabe do que inventar',
-    text: 'Sistema confiável avisa quando não tem certeza. Prefiro uma resposta honesta a uma resposta bonita e errada.',
+    title: 'Incerteza explícita',
+    text: 'Um sistema confiável deixa claro quando não tem informação suficiente para responder. Prefiro que ele sinalize a dúvida e encaminhe o caso a uma pessoa do que entregue um resultado convincente e incorreto.',
   },
   {
-    title: 'Medir antes de dizer que funciona',
-    text: 'Impressão engana. Antes de chamar algo de pronto, testo com casos novos e olho os números, não só a demonstração.',
+    title: 'Validação com dados',
+    text: 'Uma demonstração bem-sucedida não prova que o sistema funciona. Antes de considerar algo pronto, testo com casos que não foram usados no desenvolvimento e avalio o resultado por métricas definidas desde o início.',
   },
   {
-    title: 'Entender a rotina antes de programar',
-    text: 'O pedido raramente é o problema inteiro. Escuto quem vai usar e acompanho o dia a dia antes de escrever a primeira linha.',
+    title: 'Entendimento do processo antes do código',
+    text: 'A solicitação inicial raramente descreve o problema inteiro. Antes de implementar, acompanho a rotina de quem vai usar o sistema para identificar regras implícitas, exceções e pontos de falha que não aparecem na especificação.',
   },
 ]
 

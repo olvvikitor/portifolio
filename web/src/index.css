@@ -45,6 +45,10 @@
 }
 
 /* ---------- Base ---------- */
+/* `hidden` sempre esconde, mesmo em quem tem display próprio (ex.: .project é grid e escondido continuava na tela). */
+[hidden] {
+  display: none !important;
+}
 *,
 *::before,
 *::after {
@@ -520,12 +524,12 @@ a.shot:hover {
 }
 
 /* Entrada aos poucos (useReveal): só esconde quando o JS ligou "reveal-on". */
-.reveal-on :is(.section-label, .section-title, .index, .project, .chapter, .prose, .principles-title, .principles li, .courses li, .contact-mail, .contact-links) {
+.reveal-on :is(.section-label, .section-title, .index, .projects, .chapter, .prose, .principles-title, .principles li, .courses li, .contact-mail, .contact-links) {
   opacity: 0;
   translate: 0 16px;
   transition: opacity 0.6s ease, translate 0.6s ease;
 }
-.reveal-on :is(.section-label, .section-title, .index, .project, .chapter, .prose, .principles-title, .principles li, .courses li, .contact-mail, .contact-links).is-visible {
+.reveal-on :is(.section-label, .section-title, .index, .projects, .chapter, .prose, .principles-title, .principles li, .courses li, .contact-mail, .contact-links).is-visible {
   opacity: 1;
   translate: none;
 }
@@ -558,7 +562,7 @@ a.shot:hover {
     transition: none !important;
     animation: none !important;
   }
-  .reveal-on :is(.section-label, .section-title, .index, .project, .chapter, .prose, .principles-title, .principles li, .courses li, .contact-mail, .contact-links) {
+  .reveal-on :is(.section-label, .section-title, .index, .projects, .chapter, .prose, .principles-title, .principles li, .courses li, .contact-mail, .contact-links) {
     opacity: 1 !important;
     translate: none !important;
   }

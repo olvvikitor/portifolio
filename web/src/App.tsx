@@ -20,7 +20,7 @@ const revealBlocks = [
   '.section-label',
   '.section-title',
   '.index',
-  '.project',
+  '.projects', // o bloco inteiro: projeto escondido (aba não selecionada) nunca cruzaria a tela para entrar
   '.chapter',
   '.prose',
   '.principles-title',
@@ -39,8 +39,8 @@ export default function App() {
     const scrollToHash = (projectOnly: boolean) => {
       const hash = readHash()
       if (!hash || (projectOnly && !hash.includes('/'))) return
-      // O projeto tem id "projetos/<slug>"; se não existir, cai na seção.
-      const target = document.getElementById(hash) ?? document.getElementById(hash.split('/')[0])
+      // Projeto ("projetos/<slug>"): a lista mostra um por vez e já seleciona o do hash, então rolamos até a seção.
+      const target = document.getElementById(hash.split('/')[0])
       // Ao abrir: salto instantâneo (sem a rolagem suave do CSS), para o useReveal medir já no lugar certo.
       target?.scrollIntoView(projectOnly ? undefined : { behavior: 'instant' })
     }

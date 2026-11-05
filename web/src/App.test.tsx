@@ -10,7 +10,7 @@ it('imagem do hero tem dimensões, para o link direto não parar antes de Projet
   expect(img).toHaveAttribute('height')
 })
 
-it('hash #projetos/<slug> trocado sem recarregar rola até o projeto', () => {
+it('hash #projetos/<slug> trocado sem recarregar seleciona o projeto e rola até Projetos', () => {
   const scrolled: string[] = []
   Element.prototype.scrollIntoView = vi.fn(function (this: Element) {
     scrolled.push(this.id)
@@ -21,5 +21,6 @@ it('hash #projetos/<slug> trocado sem recarregar rola até o projeto', () => {
     window.history.replaceState(null, '', '/#projetos/motionfy')
     window.dispatchEvent(new HashChangeEvent('hashchange'))
   })
-  expect(scrolled).toContain('projetos/motionfy')
+  expect(scrolled).toContain('projetos')
+  expect(document.getElementById('projetos/motionfy')).not.toHaveAttribute('hidden')
 })

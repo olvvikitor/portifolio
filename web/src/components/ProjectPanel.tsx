@@ -8,14 +8,21 @@ import { Stack } from './Section'
 
 // Um projeto da lista: texto à esquerda, imagem/fluxo numa moldura à direita.
 // O id "projetos/<slug>" é o link direto (ex.: /#projetos/motionfy).
-export function ProjectPanel({ project: p, number }: { project: Project; number?: number }) {
+export function ProjectPanel({ project: p, number, hidden }: { project: Project; number?: number; hidden?: boolean }) {
   const titleId = `titulo-${p.slug}`
   const articleRef = useRef<HTMLElement>(null)
   const frameRef = useRef<HTMLDivElement>(null)
   const floating = useFloating(frameRef, articleRef)
 
   return (
-    <article ref={articleRef} id={`projetos/${p.slug}`} className="project" aria-labelledby={titleId}>
+    <article
+      ref={articleRef}
+      id={`projetos/${p.slug}`}
+      className="project"
+      role="tabpanel"
+      aria-labelledby={titleId}
+      hidden={hidden}
+    >
       <div className="project-text">
         <p className="meta project-meta">
           {number !== undefined && <span className="project-num">{String(number).padStart(2, '0')}</span>}
