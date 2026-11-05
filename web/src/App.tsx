@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { projects } from './data/profile'
 import { readHash } from './lib/hash'
 import { useActiveSection } from './hooks/useActiveSection'
+import { useReveal } from './hooks/useReveal'
 import { TopBar } from './components/TopBar'
 import { Hero } from './components/Hero'
 import { ProjectList } from './components/ProjectList'
@@ -11,6 +12,21 @@ import { Education } from './components/Education'
 import { Contact } from './components/Contact'
 
 const sectionIds = ['inicio', 'projetos', 'experiencia', 'sobre', 'formacao', 'contato']
+
+// Blocos que entram aos poucos durante a rolagem. O topo (hero) fica fora: é o que se vê ao abrir.
+const revealBlocks = [
+  '.section-label',
+  '.section-title',
+  '.index',
+  '.project',
+  '.chapter',
+  '.prose',
+  '.principles-title',
+  '.principles li',
+  '.courses li',
+  '.contact-mail',
+  '.contact-links',
+].join(', ')
 
 export default function App() {
   const active = useActiveSection(sectionIds)
@@ -23,13 +39,17 @@ export default function App() {
       if (!hash || (projectOnly && !hash.includes('/'))) return
       // O projeto tem id "projetos/<slug>"; se não existir, cai na seção.
       const target = document.getElementById(hash) ?? document.getElementById(hash.split('/')[0])
-      target?.scrollIntoView()
+      // Ao abrir: salto instantâneo (sem a rolagem suave do CSS), para o useReveal medir já no lugar certo.
+      target?.scrollIntoView(projectOnly ? undefined : { behavior: 'instant' })
     }
     const onHash = () => scrollToHash(true)
     scrollToHash(false)
     window.addEventListener('hashchange', onHash)
     return () => window.removeEventListener('hashchange', onHash)
   }, [])
+
+  // Depois da rolagem do link direto: o salto dispara um scroll, então o projeto aberto pelo link já aparece.
+  useReveal(revealBlocks)
 
   return (
     <>

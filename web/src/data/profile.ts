@@ -184,7 +184,7 @@ export const projects: Project[] = [
     stack: ['NestJS', 'Prisma', 'PostgreSQL', 'BullMQ', 'Redis', 'OpenAI', 'Next.js'],
     repo: 'https://github.com/olvvikitor/motionfy',
     site: 'https://motionfy.fun/login',
-    image: { src: '/projects/motionfy.jpg', alt: 'Perfil no Motionfy: playlist "paz" com capa ilustrada, estatísticas de humores e músicas, e o humor das últimas 24 horas.', width: 1475, height: 568 },
+    image: { src: '/projects/motionfy.jpg', alt: 'Perfil no Motionfy: playlist "paz" com capa ilustrada gerada por IA e, abaixo, a música que está tocando agora com o humor detectado; à direita, estatísticas e o humor das últimas 24 horas.', width: 1628, height: 885 },
   },
   {
     slug: 'estampa',

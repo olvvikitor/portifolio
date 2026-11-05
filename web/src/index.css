@@ -517,15 +517,19 @@ a.shot:hover {
   color: var(--text-muted);
 }
 
-.reveal {
+/* Entrada aos poucos (useReveal): só esconde quando o JS ligou "reveal-on". */
+.reveal-on :is(.section-label, .section-title, .index, .project, .chapter, .prose, .principles-title, .principles li, .courses li, .contact-mail, .contact-links) {
   opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  translate: 0 16px;
+  transition: opacity 0.6s ease, translate 0.6s ease;
 }
-.reveal.is-visible {
+.reveal-on :is(.section-label, .section-title, .index, .project, .chapter, .prose, .principles-title, .principles li, .courses li, .contact-mail, .contact-links).is-visible {
   opacity: 1;
-  transform: none;
+  translate: none;
 }
+/* Itens lado a lado entram em cascata curta. */
+.reveal-on .principles li:nth-child(2) { transition-delay: 0.08s; }
+.reveal-on .principles li:nth-child(3) { transition-delay: 0.16s; }
 
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -535,8 +539,8 @@ a.shot:hover {
     transition: none !important;
     animation: none !important;
   }
-  .reveal {
-    opacity: 1;
-    transform: none;
+  .reveal-on :is(.section-label, .section-title, .index, .project, .chapter, .prose, .principles-title, .principles li, .courses li, .contact-mail, .contact-links) {
+    opacity: 1 !important;
+    translate: none !important;
   }
 }
