@@ -88,6 +88,17 @@
 .projects {
   margin-top: 2rem;
 }
+/* Todos os projetos na mesma célula do grid: a área fica com a altura do maior e não muda ao trocar de aba.
+   O não selecionado continua ocupando espaço, só que invisível (e inerte, no componente). */
+.projects-stack {
+  display: grid;
+}
+.projects-stack > .project {
+  grid-area: 1 / 1;
+}
+.project.is-off {
+  visibility: hidden;
+}
 .project {
   display: grid;
   gap: 1.75rem;

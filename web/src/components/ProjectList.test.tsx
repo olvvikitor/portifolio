@@ -4,7 +4,9 @@ import { projects } from '../data/profile'
 import { ProjectList } from './ProjectList'
 
 const tabs = () => within(screen.getByRole('tablist', { name: 'Projetos' })).getAllByRole('tab')
-const shown = () => screen.getAllByRole('tabpanel').map((p) => p.id)
+// Selecionado = o painel que não está inerte (os outros ficam empilhados, invisíveis).
+const panels = () => [...document.querySelectorAll('[role="tabpanel"]')]
+const shown = () => panels().filter((p) => !p.hasAttribute('inert')).map((p) => p.id)
 
 afterEach(() => window.history.replaceState(null, '', '/'))
 
@@ -17,10 +19,17 @@ describe('ProjectList', () => {
     expect(tabs()[0]).toHaveAttribute('aria-controls', `projetos/${projects[0].slug}`)
   })
 
-  it('mostra um projeto por vez; os outros ficam escondidos, com o id do link direto', () => {
+  it('mostra um projeto por vez; os outros ficam empilhados no mesmo lugar, invisíveis e inertes', () => {
     const { container } = render(<ProjectList projects={projects} />)
     expect(shown()).toEqual([`projetos/${projects[0].slug}`])
     for (const p of projects) expect(container.querySelector(`[id="projetos/${p.slug}"]`)).not.toBeNull()
+    const off = panels().filter((p) => p.hasAttribute('inert'))
+    expect(off).toHaveLength(projects.length - 1)
+    for (const p of off) {
+      expect(p).toHaveClass('is-off')
+      expect(p).toHaveAttribute('aria-hidden', 'true')
+    }
+    expect(container.querySelector('.projects-stack')?.children).toHaveLength(projects.length)
   })
 
   it('clicar numa aba mostra aquele projeto e atualiza o link direto', () => {
@@ -66,7 +75,7 @@ describe('ProjectList', () => {
   it('projeto sem repositório: nenhum link de código e nenhum aviso sobrando', () => {
     render(<ProjectList projects={projects} />)
     fireEvent.click(screen.getByRole('tab', { name: /Leitura de medidor/ }))
-    const medidor = screen.getByRole('tabpanel', { name: 'Leitura de medidor' })
+    const medidor = screen.getByRole('tabpanel', { name: 'Leitura de medidor' }) // os outros têm aria-hidden
     expect(within(medidor).queryByRole('link', { name: /Ver código/ })).toBeNull()
     expect(within(medidor).queryByText(/Código privado|não publicado/)).toBeNull()
   })

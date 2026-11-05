@@ -9,8 +9,8 @@ import { Section } from './Section'
 import './ProjectList.css'
 
 // Um projeto por vez, para a página não ficar enorme: o índice no alto vira abas (o selecionado ganha fundo) e as
-// setas passam para o anterior/próximo. Os outros ficam no DOM com `hidden`, então o link direto
-// (#projetos/<slug>) continua achando o projeto: ao abrir ou trocar o hash, ele vira o selecionado.
+// setas passam para o anterior/próximo. Todos ficam empilhados no mesmo lugar (só o selecionado visível), então a
+// altura é sempre a do maior projeto. Link direto (#projetos/<slug>): ao abrir ou trocar o hash, ele vira o selecionado.
 export function ProjectList({ projects }: { projects: Project[] }) {
   const github = profile.links.find((l) => l.label === 'GitHub')
   const rows = Math.ceil(projects.length / 2) // o índice preenche coluna por coluna
@@ -87,9 +87,11 @@ export function ProjectList({ projects }: { projects: Project[] }) {
             <ChevronRight />
           </button>
         </div>
-        {projects.map((p, i) => (
-          <ProjectPanel key={p.slug} project={p} number={i + 1} hidden={i !== current} />
-        ))}
+        <div className="projects-stack">
+          {projects.map((p, i) => (
+            <ProjectPanel key={p.slug} project={p} number={i + 1} off={i !== current} />
+          ))}
+        </div>
       </div>
 
       {github && (

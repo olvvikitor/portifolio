@@ -22,5 +22,5 @@ it('hash #projetos/<slug> trocado sem recarregar seleciona o projeto e rola até
     window.dispatchEvent(new HashChangeEvent('hashchange'))
   })
   expect(scrolled).toContain('projetos')
-  expect(document.getElementById('projetos/motionfy')).not.toHaveAttribute('hidden')
+  expect(document.getElementById('projetos/motionfy')).not.toHaveAttribute('inert')
 })

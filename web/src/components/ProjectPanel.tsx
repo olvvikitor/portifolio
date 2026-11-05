@@ -8,7 +8,9 @@ import { Stack } from './Section'
 
 // Um projeto da lista: texto à esquerda, imagem/fluxo numa moldura à direita.
 // O id "projetos/<slug>" é o link direto (ex.: /#projetos/motionfy).
-export function ProjectPanel({ project: p, number, hidden }: { project: Project; number?: number; hidden?: boolean }) {
+// `off`: projeto não selecionado. Continua ocupando espaço (invisível e inerte), para a área ter sempre a altura do
+// maior projeto e a página não pular ao trocar de aba.
+export function ProjectPanel({ project: p, number, off }: { project: Project; number?: number; off?: boolean }) {
   const titleId = `titulo-${p.slug}`
   const articleRef = useRef<HTMLElement>(null)
   const frameRef = useRef<HTMLDivElement>(null)
@@ -18,10 +20,11 @@ export function ProjectPanel({ project: p, number, hidden }: { project: Project;
     <article
       ref={articleRef}
       id={`projetos/${p.slug}`}
-      className="project"
+      className={off ? 'project is-off' : 'project'}
       role="tabpanel"
       aria-labelledby={titleId}
-      hidden={hidden}
+      inert={off}
+      aria-hidden={off || undefined}
     >
       <div className="project-text">
         <p className="meta project-meta">
