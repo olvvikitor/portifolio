@@ -4,6 +4,7 @@ import { Moon, Sun } from './icons'
 import './TopBar.css'
 
 const links = [
+  { id: 'o-que-faco', label: 'O que faço', wide: true }, // fica logo abaixo do topo: some no celular estreito
   { id: 'projetos', label: 'Projetos' },
   { id: 'experiencia', label: 'Experiência' },
   { id: 'contato', label: 'Contato' },
@@ -19,7 +20,7 @@ export function TopBar({ active }: { active: string }) {
             <a
               key={l.id}
               href={`#${l.id}`}
-              className={active === l.id ? 'is-active' : undefined}
+              className={[active === l.id && 'is-active', 'wide' in l && 'nav-wide'].filter(Boolean).join(' ') || undefined}
               aria-current={active === l.id ? 'true' : undefined}
             >
               {l.label}

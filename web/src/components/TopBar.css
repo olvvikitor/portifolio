@@ -88,3 +88,9 @@
     font-size: 0.875rem;
   }
 }
+/* Celular estreito: quatro links não cabem com o botão de tema; "O que faço" sai (fica logo abaixo do topo). */
+@media (max-width: 479px) {
+  .topnav .nav-wide {
+    display: none;
+  }
+}

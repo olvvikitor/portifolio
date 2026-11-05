@@ -49,14 +49,6 @@
   color: var(--text-secondary);
   text-align: right;
 }
-/* Linha "outros projetos internos": não é link, fica suave. */
-.index-more {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  min-height: 48px;
-  color: var(--text-muted);
-}
 
 /* ---------- Projetos ---------- */
 .projects {
@@ -255,4 +247,96 @@
 
 .more {
   margin-top: 1rem;
+}
+
+/* ---------- O que sei fazer ---------- */
+/* Cada área ocupa boa parte da tela e fica centrada nela: ao rolar, uma de cada vez passa pelo meio. */
+.capability {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  padding-block: 2rem;
+}
+.capability-name,
+.capability-text {
+  margin: 0;
+}
+.capability-name {
+  font-size: clamp(2.75rem, 9vw, 7rem);
+  font-weight: 800;
+  font-stretch: 75%;
+  font-variation-settings: 'wdth' 75;
+  line-height: 0.92;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.capability-text {
+  max-width: 52ch;
+  font-size: clamp(1rem, 1.6vw, 1.1875rem);
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+/* Modo foco (só liga com IntersectionObserver): fora do meio da tela, a área some. */
+.is-focus .capability {
+  opacity: 0;
+  translate: 0 32px;
+  transition: opacity 0.5s ease, translate 0.6s ease;
+}
+.is-focus .capability.is-active {
+  opacity: 1;
+  translate: none;
+}
+.is-focus .capability-text {
+  opacity: 0;
+  transition: opacity 0.5s ease 0.15s; /* o texto entra logo depois do título */
+}
+.is-focus .capability.is-active .capability-text {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .is-focus .capability,
+  .is-focus .capability-text {
+    opacity: 1 !important;
+    translate: none !important;
+  }
+}
+
+/* Ferramentas de cada área: ícone + nome. No modo foco entram uma por uma, depois do texto. */
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.tool-icon {
+  flex: none;
+  color: var(--text-primary);
+}
+.is-focus .tool {
+  opacity: 0;
+  translate: 0 8px;
+  transition: opacity 0.4s ease, translate 0.4s ease;
+}
+.is-focus .capability.is-active .tool {
+  opacity: 1;
+  translate: none;
+  transition-delay: calc(0.35s + var(--i) * 0.12s);
+}
+@media (prefers-reduced-motion: reduce) {
+  .is-focus .tool {
+    opacity: 1 !important;
+    translate: none !important;
+  }
 }

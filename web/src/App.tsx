@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
-import { projects } from './data/profile'
+import { capabilities, projects } from './data/profile'
 import { readHash } from './lib/hash'
 import { useActiveSection } from './hooks/useActiveSection'
 import { useReveal } from './hooks/useReveal'
 import { TopBar } from './components/TopBar'
 import { Hero } from './components/Hero'
+import { Capabilities } from './components/Capabilities'
 import { ProjectList } from './components/ProjectList'
 import { Experience } from './components/Experience'
 import { About } from './components/About'
@@ -12,7 +13,7 @@ import { Education } from './components/Education'
 import { Contact } from './components/Contact'
 import { BackToTop } from './components/BackToTop'
 
-const sectionIds = ['inicio', 'projetos', 'experiencia', 'sobre', 'formacao', 'contato']
+const sectionIds = ['inicio', 'o-que-faco', 'projetos', 'experiencia', 'sobre', 'formacao', 'contato']
 
 // Blocos que entram aos poucos durante a rolagem. O topo (hero) fica fora: é o que se vê ao abrir.
 const revealBlocks = [
@@ -60,6 +61,7 @@ export default function App() {
       <TopBar active={active} />
       <main id="conteudo" className="page">
         <Hero />
+        <Capabilities items={capabilities} />
         <ProjectList projects={projects} />
         <Experience />
         <About />

@@ -50,10 +50,9 @@ describe('ProjectList', () => {
     expect(new Set(projects.map((p) => p.tag)).size).toBe(projects.length)
   })
 
-  it('avisa que é uma seleção e que há outros projetos internos', () => {
-    render(<ProjectList projects={projects} />)
-    const index = screen.getByRole('navigation', { name: 'Índice de projetos' })
-    expect(within(index).getByText(/outros projetos internos/i)).toBeInTheDocument()
+  it('avisa que é uma seleção, sem falar em sigilo nem em projetos internos', () => {
+    const { container } = render(<ProjectList projects={projects} />)
+    expect(container).not.toHaveTextContent(/sigilo|internos/i)
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(/seleção/i)
   })
 })

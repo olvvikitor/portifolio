@@ -55,6 +55,43 @@ export const profile: {
   ],
 }
 
+// "O que sei fazer" (seção própria antes de Projetos): o valor que a área traz + como faço e com quê. Sem citar projeto, empresa
+// ou trajetória (isso fica nas outras seções). Só cite ferramenta que aparece nos projetos.
+export type Capability = { title: string; text: string; tools: string[] } // tools: nomes do ToolIcon, na ordem em que entram
+
+export const capabilities: Capability[] = [
+  {
+    title: 'Automações',
+    text: 'Antes de automatizar, entendo as regras: como a tarefa é feita hoje, quais as exceções e onde costuma dar erro. Depois transformo esse conhecimento em código Python que faz o trabalho sozinho, do jeito certo, todos os dias. A equipe para de repetir o mesmo processo à mão e passa a cuidar do que realmente precisa de gente.',
+    tools: ['Python', 'pandas', 'Spark', 'Excel', 'Selenium'],
+  },
+  {
+    title: 'Desenvolvimento web',
+    text: 'Antes da primeira tela, entendo quem vai usar: o que a pessoa precisa resolver, em que ordem e onde ela costuma se perder. Depois construo o sistema completo em TypeScript, com React e Next.js na interface e NestJS por trás, do jeito que a rotina pede. O resultado é uma ferramenta que a equipe abre todo dia sem precisar de manual.',
+    tools: ['TypeScript', 'React', 'Next.js', 'NestJS'],
+  },
+  {
+    title: 'Arquitetura de sistemas',
+    text: 'Antes de escolher tecnologia, entendo o negócio: quais regras não podem quebrar, o que vai crescer e o que precisa aguentar falha. Depois organizo o sistema em partes bem separadas, com os dados no PostgreSQL e o trabalho pesado fora do caminho de quem usa. Assim ele cresce, recebe novas funções e continua fácil de manter, sem precisar ser reescrito.',
+    tools: ['NestJS', 'PostgreSQL', 'Prisma', 'Redis', 'Docker'],
+  },
+  {
+    title: 'IA aplicada',
+    text: 'Antes de colocar IA, entendo onde ela ajuda de verdade e onde ela pode errar. Depois aplico esse conhecimento para que o modelo responda com base nos documentos da própria empresa, mostre de onde tirou cada informação e diga quando não sabe. A equipe ganha respostas em segundos, com confiança no que está lendo.',
+    tools: ['Python', 'OpenAI', 'PostgreSQL', 'FastAPI'],
+  },
+  {
+    title: 'Visão computacional',
+    text: 'Antes de treinar um modelo, entendo o que uma pessoa olha numa imagem para tomar a decisão: o detalhe que importa, as fotos ruins, os casos que confundem. Depois transformo isso em modelos com PyTorch e OpenCV que fazem essa leitura sozinhos, em escala, e avisam quando a imagem não permite uma resposta segura.',
+    tools: ['Python', 'PyTorch', 'YOLOv8', 'OpenCV'],
+  },
+  {
+    title: 'Dados',
+    text: 'Antes de montar um painel, entendo a pergunta que a área precisa responder e de onde vêm os números. Depois busco os dados direto nas fontes, trato com pandas e Spark e transformo em painéis no Power BI que mostram o que importa. A decisão deixa de ser feita no achismo e passa a ter número confiável por trás.',
+    tools: ['Power BI', 'pandas', 'Spark', 'Excel', 'PostgreSQL'],
+  },
+]
+
 // "Como eu trabalho" (seção Sobre): forma de pensar, sem citar projeto específico. Linguagem simples.
 export const principles: { title: string; text: string }[] = [
   {

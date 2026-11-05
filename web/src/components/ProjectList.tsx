@@ -8,8 +8,8 @@ import './ProjectList.css'
 
 export function ProjectList({ projects }: { projects: Project[] }) {
   const github = profile.links.find((l) => l.label === 'GitHub')
-  // +1 linha para "outros projetos internos"; o índice preenche coluna por coluna.
-  const rows = Math.ceil((projects.length + 1) / 2)
+  // O índice preenche coluna por coluna.
+  const rows = Math.ceil(projects.length / 2)
 
   return (
     <Section id="projetos" label="Projetos" title="Uma seleção do que *construí* no trabalho e por conta própria.">
@@ -24,10 +24,6 @@ export function ProjectList({ projects }: { projects: Project[] }) {
               </a>
             </li>
           ))}
-          <li className="index-more">
-            <span className="index-num">+</span>
-            <span className="index-name">Outros projetos internos, sob sigilo</span>
-          </li>
         </ol>
       </nav>
 
