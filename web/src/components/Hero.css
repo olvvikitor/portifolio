@@ -35,7 +35,7 @@
   flex-wrap: wrap;
   gap: 0.75rem;
 }
-/* Carrossel de projetos: trilho com scroll-snap (arrastar no celular), um slide por vez, moldura de altura fixa para
+/* Carrossel de projetos: trilho com scroll-snap (arrastar no celular), um slide por vez, captura de altura fixa (16:9, sem moldura) para
    a página não pular ao trocar. Sem barra de rolagem: quem navega são as setas e o contador. */
 .carousel {
   min-width: 0;
@@ -55,34 +55,13 @@
   min-width: 0;
   scroll-snap-align: start;
 }
-.carousel-frame .shot {
+.carousel-shot {
   aspect-ratio: 16 / 9;
 }
-.carousel-frame .shot img {
+.carousel-shot img {
   height: 100%;
   object-fit: cover;
   object-position: top left;
-}
-/* Projeto sem imagem: nome grande na moldura, no mesmo peso dos títulos condensados. */
-.carousel-cover {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  padding: clamp(1rem, 3vw, 2rem);
-  background: var(--bg-raised);
-}
-.carousel-cover-tag {
-  font-size: 0.9375rem;
-  color: var(--text-muted);
-}
-.carousel-cover-name {
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  font-weight: 800;
-  font-stretch: 75%;
-  font-variation-settings: 'wdth' 75;
-  line-height: 0.95;
-  letter-spacing: -0.015em;
 }
 .carousel-caption {
   margin-top: 0.75rem;

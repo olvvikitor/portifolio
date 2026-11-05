@@ -2,11 +2,13 @@ import { useRef, useState } from 'react'
 import type { Project } from '../data/profile'
 import { ArrowUpRight, ChevronLeft, ChevronRight } from './icons'
 
-// Carrossel do topo: todos os projetos, um por vez. Quem tem site vem primeiro, depois quem tem imagem. Sem troca
+// Carrossel do topo: só projetos com imagem, um por vez, sem moldura (a captura direto). Quem tem site vem primeiro. Sem troca
 // automática (o visitante decide quando passar). Trilho com scroll-snap: no celular, arrastar com o dedo já funciona;
-// as setas só rolam o trilho. Projeto sem imagem mostra nome e tag na mesma moldura; sem site, a legenda diz "Em breve".
+// as setas só rolam o trilho. Sem site, a legenda diz "Em breve".
 export function HeroCarousel({ projects }: { projects: Project[] }) {
-  const slides = [...projects].sort((a, b) => rank(a) - rank(b))
+  const slides = projects
+    .filter((p): p is Project & { image: NonNullable<Project['image']> } => !!p.image)
+    .sort((a, b) => Number(!a.site) - Number(!b.site))
   const track = useRef<HTMLDivElement>(null)
   const [current, setCurrent] = useState(0)
 
@@ -33,24 +35,15 @@ export function HeroCarousel({ projects }: { projects: Project[] }) {
             aria-label={`${i + 1} de ${slides.length}: ${p.name}`}
             inert={i !== current}
           >
-            <div className="frame carousel-frame">
-              {p.image ? (
-                p.site ? (
-                  <a className="shot" href={p.site} target="_blank" rel="noreferrer" tabIndex={-1}>
-                    <img src={p.image.src} alt={p.image.alt} width={p.image.width} height={p.image.height} />
-                  </a>
-                ) : (
-                  <div className="shot">
-                    <img src={p.image.src} alt={p.image.alt} width={p.image.width} height={p.image.height} />
-                  </div>
-                )
-              ) : (
-                <div className="shot carousel-cover" aria-hidden="true">
-                  <span className="carousel-cover-tag">{p.tag}</span>
-                  <span className="carousel-cover-name">{p.name}</span>
-                </div>
-              )}
-            </div>
+            {p.site ? (
+              <a className="shot carousel-shot" href={p.site} target="_blank" rel="noreferrer" tabIndex={-1}>
+                <img src={p.image.src} alt={p.image.alt} width={p.image.width} height={p.image.height} />
+              </a>
+            ) : (
+              <div className="shot carousel-shot">
+                <img src={p.image.src} alt={p.image.alt} width={p.image.width} height={p.image.height} />
+              </div>
+            )}
             <div className="carousel-caption">
               <span>
                 <strong>{p.name}</strong>
@@ -82,5 +75,3 @@ export function HeroCarousel({ projects }: { projects: Project[] }) {
     </section>
   )
 }
-
-const rank = (p: Project) => (p.site ? 0 : p.image ? 1 : 2)

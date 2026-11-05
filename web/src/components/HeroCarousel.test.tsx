@@ -12,32 +12,31 @@ const projects: Project[] = [
 ]
 const slides = () => screen.getAllByRole('group')
 
-it('mostra todos os projetos, primeiro quem tem site, depois quem tem imagem', () => {
+it('mostra só projetos com imagem, sem moldura, primeiro quem tem site', () => {
   render(<HeroCarousel projects={projects} />)
   expect(slides().map((s) => s.getAttribute('aria-label'))).toEqual([
-    '1 de 3: Motionfy',
-    '2 de 3: Estampa',
-    '3 de 3: Medidor',
+    '1 de 2: Motionfy',
+    '2 de 2: Estampa',
   ])
+  expect(document.querySelector('.frame')).toBeNull()
 })
 
 it('projeto com site tem "Abrir site"; sem link, a legenda diz "Em breve"', () => {
   render(<HeroCarousel projects={projects} />)
-  const [motionfy, estampa, medidor] = slides()
+  const [motionfy, estampa] = slides()
   expect(within(motionfy).getByRole('link', { name: /Abrir site/ })).toHaveAttribute('href', 'https://motionfy.fun')
   expect(within(estampa).getByText('Em breve')).toBeInTheDocument()
-  expect(within(medidor).getByText('Em breve')).toBeInTheDocument()
-  expect(within(medidor).queryByRole('img')).not.toBeInTheDocument() // sem imagem: nome na moldura
 })
 
 it('as setas passam de um em um e dão a volta; só o slide atual fica acessível', () => {
   render(<HeroCarousel projects={projects} />)
-  expect(screen.getByText('1 / 3')).toBeInTheDocument()
+  expect(screen.getByText('1 / 2')).toBeInTheDocument()
   fireEvent.click(screen.getByRole('button', { name: 'Próximo projeto' }))
-  expect(screen.getByText('2 / 3')).toBeInTheDocument()
+  expect(screen.getByText('2 / 2')).toBeInTheDocument()
   expect(slides()[1]).not.toHaveAttribute('inert')
   expect(slides()[0]).toHaveAttribute('inert')
   fireEvent.click(screen.getByRole('button', { name: 'Projeto anterior' }))
-  fireEvent.click(screen.getByRole('button', { name: 'Projeto anterior' }))
-  expect(screen.getByText('3 / 3')).toBeInTheDocument()
+  expect(screen.getByText('1 / 2')).toBeInTheDocument()
+  fireEvent.click(screen.getByRole('button', { name: 'Projeto anterior' })) // do primeiro, volta para o último
+  expect(screen.getByText('2 / 2')).toBeInTheDocument()
 })
