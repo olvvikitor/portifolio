@@ -531,6 +531,23 @@ a.shot:hover {
 .reveal-on .principles li:nth-child(2) { transition-delay: 0.08s; }
 .reveal-on .principles li:nth-child(3) { transition-delay: 0.16s; }
 
+/* Voltar ao topo: flutua no canto, sobre o conteúdo (fundo da página + sombra para não sumir em cima do texto). */
+.back-to-top {
+  position: fixed;
+  right: clamp(1rem, 3vw, 2rem);
+  bottom: clamp(1rem, 3vw, 2rem);
+  z-index: 40;
+  background: var(--bg-page);
+  box-shadow: var(--shadow-float);
+  animation: back-to-top-in 0.25s ease;
+}
+.back-to-top:hover {
+  background: var(--bg-raised);
+}
+@keyframes back-to-top-in {
+  from { opacity: 0; translate: 0 8px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

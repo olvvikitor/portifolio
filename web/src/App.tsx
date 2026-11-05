@@ -10,6 +10,7 @@ import { Experience } from './components/Experience'
 import { About } from './components/About'
 import { Education } from './components/Education'
 import { Contact } from './components/Contact'
+import { BackToTop } from './components/BackToTop'
 
 const sectionIds = ['inicio', 'projetos', 'experiencia', 'sobre', 'formacao', 'contato']
 
@@ -65,6 +66,7 @@ export default function App() {
         <Education />
         <Contact />
       </main>
+      <BackToTop />
     </>
   )
 }

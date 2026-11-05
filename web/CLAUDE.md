@@ -17,3 +17,4 @@ React + Vite, CSS puro. Conteúdo todo em `src/data/profile.ts`.
 - Títulos (hero e seções): `*trecho*` no texto vira `.emph` (Bricolage peso 800, largura 75%). Um ou dois trechos por título, em `--accent`.
 - Favicon (`public/favicon.svg`): "jv" minúsculo desenhado em traços grossos (4,4 de 32), sem `<text>`, sobre quadrado escuro; o pingo do j é o verde do "Disponível" (`--ok` escuro). Não trocar por letra em fonte de sistema.
 - Entrada aos poucos: `useReveal` no App, por bloco (rótulo e título das seções, índice, cada projeto, capítulo, item). Ao abrir, tudo fora do hero fica oculto, mesmo o que já está na tela; aparece na primeira rolagem, nunca a seção inteira (seção alta escondida = página em branco). Lista de blocos em `revealBlocks` (App.tsx) e no `:is(...)` do index.css: manter as duas iguais.
+- Voltar ao topo: `BackToTop` (`.btn-icon.back-to-top`), fixo no canto inferior direito, só aparece depois de rolar mais que uma tela.
