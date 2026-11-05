@@ -59,3 +59,15 @@ export const ArrowUp = () => (
     <path d="M12 19V5M5 12l7-7 7 7" />
   </svg>
 )
+
+export const ChevronLeft = () => (
+  <svg {...base} width={18} height={18}>
+    <path d="m15 6-6 6 6 6" />
+  </svg>
+)
+
+export const ChevronRight = () => (
+  <svg {...base} width={18} height={18}>
+    <path d="m9 6 6 6-6 6" />
+  </svg>
+)

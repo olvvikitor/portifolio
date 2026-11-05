@@ -250,14 +250,19 @@
 }
 
 /* ---------- O que sei fazer ---------- */
-/* Cada área ocupa boa parte da tela e fica centrada nela: ao rolar, uma de cada vez passa pelo meio. */
+/* Cada área ocupa boa parte da tela e fica centrada nela: ao rolar, uma de cada vez passa pelo meio. O <li> é o que se
+   mede para saber qual está no meio, então nunca se mexe; quem anima é o .capability-body de dentro. */
 .capability {
   min-height: 70vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 1rem;
   padding-block: 2rem;
+}
+.capability-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 .capability-name,
 .capability-text {
@@ -278,25 +283,26 @@
   line-height: 1.6;
   color: var(--text-secondary);
 }
-/* Modo foco (só liga com IntersectionObserver): fora do meio da tela, a área some. */
-.is-focus .capability {
+/* Modo foco: fora do meio da tela, a área some. */
+.is-focus .capability-body {
   opacity: 0;
   translate: 0 32px;
   transition: opacity 0.5s ease, translate 0.6s ease;
 }
-.is-focus .capability.is-active {
+.is-focus .capability.is-active .capability-body {
   opacity: 1;
   translate: none;
 }
 .is-focus .capability-text {
   opacity: 0;
-  transition: opacity 0.5s ease 0.15s; /* o texto entra logo depois do título */
+  transition: opacity 0.5s ease;
 }
 .is-focus .capability.is-active .capability-text {
   opacity: 1;
+  transition-delay: 0.15s; /* o texto entra logo depois do título */
 }
 @media (prefers-reduced-motion: reduce) {
-  .is-focus .capability,
+  .is-focus .capability-body,
   .is-focus .capability-text {
     opacity: 1 !important;
     translate: none !important;
@@ -338,5 +344,31 @@
   .is-focus .tool {
     opacity: 1 !important;
     translate: none !important;
+  }
+}
+
+/* Marca-texto nas frases-chave (==trecho== no texto): faixa do --mark na parte de baixo da linha, quebrando junto com
+   o texto. No modo foco a faixa é passada da esquerda para a direita quando a área entra, uma frase depois da outra. */
+.highlight {
+  color: var(--text-primary);
+  background: linear-gradient(var(--mark), var(--mark)) no-repeat 0 88% / 100% 0.72em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding-inline: 0.12em;
+  margin-inline: -0.12em;
+  border-radius: 2px;
+}
+.is-focus .highlight {
+  background-size: 0% 0.72em;
+  transition: background-size 0.6s ease;
+}
+.is-focus .capability.is-active .highlight {
+  background-size: 100% 0.72em;
+  transition-delay: calc(0.6s + var(--m) * 0.3s);
+}
+@media (prefers-reduced-motion: reduce) {
+  .is-focus .highlight {
+    background-size: 100% 0.72em !important;
+    transition: none !important;
   }
 }

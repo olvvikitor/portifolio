@@ -13,6 +13,7 @@
   --border-medium: rgba(36, 36, 34, 0.2);
   --ok: #23905f; /* "Disponível" */
   --accent: #c4321f; /* vermelho quente dos destaques nos títulos (5,3:1 sobre o fundo) */
+  --mark: rgba(196, 50, 31, 0.15); /* marca-texto das frases-chave em "O que faço": o --accent bem diluído */
 
   /* Uma família só: grotesca com eixo óptico (títulos ganham caráter, texto continua legível). */
   --font-sans: 'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -37,6 +38,7 @@
   --border-medium: rgba(236, 236, 230, 0.22);
   --ok: #5cc493;
   --accent: #ff6a52; /* mais claro no escuro (6,6:1) */
+  --mark: rgba(255, 106, 82, 0.22);
   /* No escuro a sombra some; a borda clara é que mostra a elevação. */
   --shadow-float: 0 18px 40px -20px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(236, 236, 230, 0.08);
   color-scheme: dark;

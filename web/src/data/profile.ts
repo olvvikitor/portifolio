@@ -57,38 +57,38 @@ export const profile: {
 
 // "O que sei fazer" (seção própria antes de Projetos): o valor que a área traz + como faço e com quê. Sem citar projeto, empresa
 // ou trajetória (isso fica nas outras seções). Só cite ferramenta que aparece nos projetos.
-export type Capability = { title: string; text: string; tools: string[] } // tools: nomes do ToolIcon, na ordem em que entram
+export type Capability = { title: string; text: string; tools: string[] } // text: ==trecho== vira marca-texto; tools: nomes do ToolIcon, na ordem em que entram
 
 export const capabilities: Capability[] = [
   {
-    title: 'Automações',
-    text: 'Antes de automatizar, entendo as regras: como a tarefa é feita hoje, quais as exceções e onde costuma dar erro. Depois transformo esse conhecimento em código Python que faz o trabalho sozinho, do jeito certo, todos os dias. A equipe para de repetir o mesmo processo à mão e passa a cuidar do que realmente precisa de gente.',
-    tools: ['Python', 'pandas', 'Spark', 'Excel', 'Selenium'],
-  },
-  {
-    title: 'Desenvolvimento web',
-    text: 'Antes da primeira tela, entendo quem vai usar: o que a pessoa precisa resolver, em que ordem e onde ela costuma se perder. Depois construo o sistema completo em TypeScript, com React e Next.js na interface e NestJS por trás, do jeito que a rotina pede. O resultado é uma ferramenta que a equipe abre todo dia sem precisar de manual.',
-    tools: ['TypeScript', 'React', 'Next.js', 'NestJS'],
-  },
-  {
     title: 'Arquitetura de sistemas',
-    text: 'Antes de escolher tecnologia, entendo o negócio: quais regras não podem quebrar, o que vai crescer e o que precisa aguentar falha. Depois organizo o sistema em partes bem separadas, com os dados no PostgreSQL e o trabalho pesado fora do caminho de quem usa. Assim ele cresce, recebe novas funções e continua fácil de manter, sem precisar ser reescrito.',
+    text: 'Desenho e evolução de backends com ==domínios bem delimitados==, contratos claros entre módulos e ==regras de negócio isoladas da camada de infraestrutura==. Operações pesadas ou demoradas são tratadas de forma assíncrona, com filas e cache, para ==não comprometer o tempo de resposta== de quem usa o sistema. A modelagem de dados é pensada desde o início para suportar crescimento de volume e de funcionalidades, com migrações versionadas e ambientes reproduzíveis em contêineres. O objetivo é um sistema que ==aceita mudanças com previsibilidade, sem depender de reescritas==.',
     tools: ['NestJS', 'PostgreSQL', 'Prisma', 'Redis', 'Docker'],
   },
   {
+    title: 'Desenvolvimento web',
+    text: 'Aplicações completas em TypeScript, ==da modelagem do banco à interface==, com tipagem compartilhada entre as camadas para reduzir erros de integração. O desenho das telas ==parte do fluxo real de trabalho de quem vai usar==: a ordem das tarefas, as informações necessárias em cada etapa e os pontos onde o processo costuma travar. No backend, APIs organizadas por domínio, com validação de entrada, controle de acesso e tratamento consistente de erros. No frontend, renderização no servidor quando faz diferença para desempenho e ==componentes reaproveitáveis para manter a interface coerente== à medida que o sistema cresce.',
+    tools: ['TypeScript', 'React', 'Next.js', 'NestJS'],
+  },
+  {
     title: 'IA aplicada',
-    text: 'Antes de colocar IA, entendo onde ela ajuda de verdade e onde ela pode errar. Depois aplico esse conhecimento para que o modelo responda com base nos documentos da própria empresa, mostre de onde tirou cada informação e diga quando não sabe. A equipe ganha respostas em segundos, com confiança no que está lendo.',
-    tools: ['Python', 'OpenAI', 'PostgreSQL', 'FastAPI'],
+    text: 'Sistemas de busca e resposta sobre bases documentais internas, em que o modelo de linguagem ==trabalha a partir de trechos recuperados dos próprios documentos da empresa==, e não apenas do seu conhecimento geral. ==Cada resposta é acompanhada das fontes utilizadas==, permitindo verificação, e o sistema é construído para ==sinalizar quando a informação disponível não é suficiente==. O trabalho inclui preparação e segmentação dos documentos, indexação para busca semântica, desenho dos prompts e avaliação da qualidade das respostas com casos reais, além da exposição do serviço por APIs integráveis aos sistemas existentes.',
+    tools: ['Python', 'OpenAI', 'FastAPI', 'PostgreSQL'],
   },
   {
     title: 'Visão computacional',
-    text: 'Antes de treinar um modelo, entendo o que uma pessoa olha numa imagem para tomar a decisão: o detalhe que importa, as fotos ruins, os casos que confundem. Depois transformo isso em modelos com PyTorch e OpenCV que fazem essa leitura sozinhos, em escala, e avisam quando a imagem não permite uma resposta segura.',
+    text: 'Modelos de detecção e classificação para ==inspeção visual em escala==, aplicados a tarefas que hoje dependem de análise manual de imagens. O desenvolvimento começa pelo ==entendimento dos critérios usados por quem faz essa análise==, que orientam a anotação dos dados e a definição do que o modelo precisa reconhecer. O treinamento considera imagens de baixa qualidade e casos ambíguos, e o modelo opera com limiares de confiança que ==encaminham resultados incertos para revisão humana==. A avaliação é feita com métricas adequadas ao problema e a entrega inclui o pipeline de pré-processamento e inferência pronto para integração.',
     tools: ['Python', 'PyTorch', 'YOLOv8', 'OpenCV'],
   },
   {
+    title: 'Automações',
+    text: 'Automação de processos operacionais recorrentes, como consolidação de planilhas, extração de dados de sistemas web e geração de relatórios periódicos. Antes da implementação, o processo é mapeado em detalhe, incluindo ==regras, exceções e pontos de falha conhecidos==, já que são esses casos que ==determinam a robustez da automação==. As rotinas são construídas com registro de execução, tratamento de erros e possibilidade de reprocessamento, para que ==falhas sejam identificadas e corrigidas sem intervenção manual== no fluxo inteiro.',
+    tools: ['Python', 'pandas', 'Selenium', 'Excel'],
+  },
+  {
     title: 'Dados',
-    text: 'Antes de montar um painel, entendo a pergunta que a área precisa responder e de onde vêm os números. Depois busco os dados direto nas fontes, trato com pandas e Spark e transformo em painéis no Power BI que mostram o que importa. A decisão deixa de ser feita no achismo e passa a ter número confiável por trás.',
-    tools: ['Power BI', 'pandas', 'Spark', 'Excel', 'PostgreSQL'],
+    text: 'Integração de dados de múltiplas fontes, tratamento e modelagem para indicadores e painéis de acompanhamento. O ponto de partida é ==a pergunta de negócio que o painel precisa responder==, o que define quais dados buscar, em que granularidade e com qual frequência de atualização. A extração é feita diretamente nas bases de origem, com tratamento e padronização antes da camada de visualização, e a modelagem segue estruturas que ==mantêm os cálculos consistentes e o desempenho estável== conforme o volume cresce. Experiência com ==operações de atendimento em larga escala==, com indicadores acompanhados diariamente pela gestão.',
+    tools: ['Power BI', 'SQL', 'DAX', 'pandas', 'Spark', 'PostgreSQL'],
   },
 ]
 

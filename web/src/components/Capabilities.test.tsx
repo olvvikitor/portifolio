@@ -1,5 +1,5 @@
 import { act, render, screen, within } from '@testing-library/react'
-import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+import { expect, it } from 'vitest'
 import { Capabilities } from './Capabilities'
 
 const items = [
@@ -8,26 +8,17 @@ const items = [
   { title: 'Dados', text: 'Painéis.', tools: [] },
 ]
 
-let cb: IntersectionObserverCallback = () => {}
-const io = {} as IntersectionObserver
-const cross = (el: Element, isIntersecting: boolean) =>
-  act(() => cb([{ target: el, isIntersecting } as unknown as IntersectionObserverEntry], io))
-const scroll = () => act(() => window.dispatchEvent(new Event('scroll')))
 const item = (name: string) => screen.getByRole('heading', { name }).closest('li')!
-
-beforeEach(() => {
-  vi.stubGlobal(
-    'IntersectionObserver',
-    class {
-      constructor(c: IntersectionObserverCallback) {
-        cb = c
-      }
-      observe() {}
-      disconnect() {}
-    },
-  )
-})
-afterEach(() => vi.unstubAllGlobals())
+// Tela de 768px (meio em 384). Cada área tem 500px e há 40px entre elas; `y` = onde começa a primeira, depois rola.
+const scrollTo = (y: number) =>
+  act(() => {
+    items.forEach((c, i) => {
+      const top = y + i * 540
+      item(c.title).getBoundingClientRect = () => ({ top, bottom: top + 500 }) as DOMRect
+    })
+    window.dispatchEvent(new Event('scroll'))
+  })
+const active = () => items.filter((c) => item(c.title).classList.contains('is-active')).map((c) => c.title)
 
 it('é uma seção própria, separada de Projetos, com cada área: título em cima e texto abaixo', () => {
   render(<Capabilities items={items} />)
@@ -40,23 +31,47 @@ it('é uma seção própria, separada de Projetos, com cada área: título em ci
 
 it('ao abrir, nenhuma área aparece; depois de rolar, só a que está no meio da tela fica visível', () => {
   render(<Capabilities items={items} />)
-  cross(item('Automações'), true)
-  expect(item('Automações')).not.toHaveClass('is-active')
-
-  scroll()
-  expect(item('Automações')).toHaveClass('is-active')
-  expect(item('Desenvolvimento web')).not.toHaveClass('is-active')
-
-  cross(item('Automações'), false)
-  cross(item('Desenvolvimento web'), true)
-  expect(item('Desenvolvimento web')).toHaveClass('is-active')
-  expect(item('Automações')).not.toHaveClass('is-active')
+  expect(active()).toEqual([])
+  scrollTo(0)
+  expect(active()).toEqual(['Automações'])
+  scrollTo(-300)
+  expect(active()).toEqual(['Desenvolvimento web'])
 })
 
-it('sem IntersectionObserver, tudo fica visível (o modo foco nem liga)', () => {
-  vi.stubGlobal('IntersectionObserver', undefined)
+it('no espaço entre duas áreas, a atual continua visível (a seção nunca fica vazia)', () => {
   render(<Capabilities items={items} />)
-  expect(screen.getByRole('list', { name: /faz diferença/ })).not.toHaveClass('is-focus')
+  scrollTo(-100)
+  scrollTo(-130) // meio da tela entre a primeira (até 370) e a segunda (de 410)
+  expect(active()).toEqual(['Automações'])
+})
+
+it('voltando para cima, troca uma vez só para a área anterior, sem piscar entre as duas', () => {
+  render(<Capabilities items={items} />)
+  scrollTo(-600)
+  expect(active()).toEqual(['Desenvolvimento web'])
+  // -150: o meio cai no espaço entre as duas, a de baixo continua
+  for (const y of [-500, -400, -300, -200, -150]) {
+    scrollTo(y)
+    expect(active()).toEqual(['Desenvolvimento web'])
+  }
+  scrollTo(-100)
+  expect(active()).toEqual(['Automações'])
+})
+
+it('acima da primeira ou abaixo da última área, nenhuma fica visível', () => {
+  render(<Capabilities items={items} />)
+  scrollTo(0)
+  scrollTo(500) // voltou para o topo
+  expect(active()).toEqual([])
+  scrollTo(-1000)
+  expect(active()).toEqual(['Dados'])
+  scrollTo(-1300) // passou da última
+  expect(active()).toEqual([])
+})
+
+it('a animação fica num bloco de dentro: o item medido não se move', () => {
+  render(<Capabilities items={items} />)
+  expect(item('Automações').firstElementChild).toHaveClass('capability-body')
 })
 
 it('mostra as ferramentas de cada área, com ícone e nome, em ordem para entrarem uma por uma', () => {
@@ -65,4 +80,12 @@ it('mostra as ferramentas de cada área, com ícone e nome, em ordem para entrar
   expect(tools.map((t) => t.textContent)).toEqual(['Python', 'Excel'])
   expect(tools[0].querySelector('svg')).toHaveAttribute('aria-hidden', 'true')
   expect(tools[1].style.getPropertyValue('--i')).toBe('1')
+})
+
+it('frases entre ==sinais== viram marca-texto, numeradas na ordem em que são passadas', () => {
+  render(<Capabilities items={[{ title: 'Dados', text: 'Parte do ==negócio== e ==mede tudo==.', tools: [] }]} />)
+  const marks = [...item('Dados').querySelectorAll('mark')]
+  expect(marks.map((m) => m.textContent)).toEqual(['negócio', 'mede tudo'])
+  expect(marks[1].style.getPropertyValue('--m')).toBe('1')
+  expect(item('Dados')).toHaveTextContent('Parte do negócio e mede tudo.')
 })
