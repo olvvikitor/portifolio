@@ -39,6 +39,12 @@ describe('ProjectTabs', () => {
     expect(screen.getByRole('tabpanel')).toHaveAccessibleName('Motionfy')
   })
 
+  it('projeto com imagem e sem site ainda mostra a imagem', () => {
+    window.history.replaceState(null, '', '/#projetos/estampa')
+    render(<ProjectTabs projects={projects} />)
+    expect(within(screen.getByRole('tabpanel')).getByRole('img', { name: /Tela do Estampa/ })).toBeInTheDocument()
+  })
+
   it('projeto sem repositório mostra código privado e nenhum link de código', () => {
     render(<ProjectTabs projects={projects} />)
     const panel = screen.getByRole('tabpanel')

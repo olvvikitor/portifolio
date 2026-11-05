@@ -36,11 +36,16 @@ export function ProjectPanel({ project: p }: { project: Project }) {
         </div>
       </div>
       <div className="panel-media">
-        {p.image && p.site && (
-          <a className="shot" href={p.site} target="_blank" rel="noreferrer" tabIndex={-1}>
-            <img src={p.image.src} alt={p.image.alt} width={1523} height={784} loading="lazy" />
-          </a>
-        )}
+        {p.image &&
+          (p.site ? (
+            <a className="shot" href={p.site} target="_blank" rel="noreferrer" tabIndex={-1}>
+              <img src={p.image.src} alt={p.image.alt} width={p.image.width} height={p.image.height} loading="lazy" />
+            </a>
+          ) : (
+            <div className="shot">
+              <img src={p.image.src} alt={p.image.alt} width={p.image.width} height={p.image.height} loading="lazy" />
+            </div>
+          ))}
         <FlowDiagram steps={p.flow} core={p.flowCore} />
       </div>
     </div>

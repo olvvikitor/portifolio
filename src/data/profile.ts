@@ -25,7 +25,7 @@ export type Project = {
   stack: string[]
   repo?: string // ausente em projeto de trabalho (código privado)
   site?: string
-  image?: { src: string; alt: string }
+  image?: { src: string; alt: string; width: number; height: number }
 }
 
 export type Course = { title: string; school: string; place: string; period: string }
@@ -193,7 +193,7 @@ export const projects: Project[] = [
     stack: ['NestJS', 'Prisma', 'PostgreSQL', 'BullMQ', 'Redis', 'OpenAI', 'Next.js'],
     repo: 'https://github.com/olvvikitor/motionfy',
     site: 'https://motionfy.fun/login',
-    image: { src: '/projects/motionfy.jpg', alt: 'Tela de entrada do Motionfy: "O que você escuta diz como você se sente."' },
+    image: { src: '/projects/motionfy.jpg', alt: 'Tela de entrada do Motionfy: "O que você escuta diz como você se sente."', width: 1523, height: 784 },
   },
   {
     slug: 'rag',
@@ -225,6 +225,7 @@ export const projects: Project[] = [
     flow: ['Pedido', 'Prompt por estilo', 'OpenAI Images', 'Recorte do fundo', 'PNG'],
     flowCore: 2,
     stack: ['Next.js', 'TypeScript', 'OpenAI', 'sharp'],
+    image: { src: '/projects/estampa.jpg', alt: 'Tela do Estampa: escolha de estilo à esquerda, arte gerada e galeria à direita.', width: 1536, height: 735 },
   },
 ]
 

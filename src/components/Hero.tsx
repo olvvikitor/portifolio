@@ -34,7 +34,7 @@ export function Hero() {
       {featured?.image && featured.site && (
         <figure className="hero-figure">
           <a className="shot" href={featured.site} target="_blank" rel="noreferrer" tabIndex={-1}>
-            <img src={featured.image.src} alt={featured.image.alt} width={1523} height={784} />
+            <img src={featured.image.src} alt={featured.image.alt} width={featured.image.width} height={featured.image.height} />
           </a>
           <figcaption>
             <span>
