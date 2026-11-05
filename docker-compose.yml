@@ -1,0 +1,7 @@
+services:
+  web:
+    build: ./web
+    image: portifolio-web
+    ports:
+      - "${PORT:-8080}:80"
+    restart: unless-stopped
