@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { projects } from '../data/profile'
@@ -7,7 +7,7 @@ import { ProjectTabs } from './ProjectTabs'
 describe('ProjectTabs', () => {
   it('mostra a primeira aba e troca no clique', async () => {
     render(<ProjectTabs projects={projects} />)
-    expect(screen.getByRole('tab', { name: 'Motionfy' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('tab', { name: 'Leitura de medidor' })).toHaveAttribute('aria-selected', 'true')
     await userEvent.click(screen.getByRole('tab', { name: 'RAG do zero' }))
     expect(screen.getByRole('tab', { name: 'RAG do zero' })).toHaveAttribute('aria-selected', 'true')
     expect(screen.getByRole('tabpanel')).toHaveAccessibleName('RAG do zero')
@@ -16,15 +16,15 @@ describe('ProjectTabs', () => {
 
   it('teclado: setas, Home e End movem seleção e foco', async () => {
     render(<ProjectTabs projects={projects} />)
-    await userEvent.click(screen.getByRole('tab', { name: 'Motionfy' }))
+    await userEvent.click(screen.getByRole('tab', { name: 'Leitura de medidor' }))
     await userEvent.keyboard('{ArrowLeft}')
-    expect(screen.getByRole('tab', { name: 'Bet Scraper' })).toHaveFocus()
+    expect(screen.getByRole('tab', { name: 'Estampa' })).toHaveFocus()
     await userEvent.keyboard('{Home}')
-    expect(screen.getByRole('tab', { name: 'Motionfy' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('tab', { name: 'Leitura de medidor' })).toHaveAttribute('aria-selected', 'true')
     await userEvent.keyboard('{ArrowRight}')
-    expect(screen.getByRole('tab', { name: 'RAG do zero' })).toHaveFocus()
+    expect(screen.getByRole('tab', { name: 'Assistente RAG' })).toHaveFocus()
     await userEvent.keyboard('{End}')
-    expect(screen.getByRole('tab', { name: 'Bet Scraper' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('tab', { name: 'Estampa' })).toHaveAttribute('aria-selected', 'true')
   })
 
   it('só a aba ativa entra no Tab', () => {
@@ -34,8 +34,15 @@ describe('ProjectTabs', () => {
   })
 
   it('abre a aba do hash', () => {
-    window.history.replaceState(null, '', '/#projetos/anjo-bom')
+    window.history.replaceState(null, '', '/#projetos/motionfy')
     render(<ProjectTabs projects={projects} />)
-    expect(screen.getByRole('tabpanel')).toHaveAccessibleName('Anjo Bom')
+    expect(screen.getByRole('tabpanel')).toHaveAccessibleName('Motionfy')
+  })
+
+  it('projeto sem repositório mostra código privado e nenhum link de código', () => {
+    render(<ProjectTabs projects={projects} />)
+    const panel = screen.getByRole('tabpanel')
+    expect(within(panel).getByText('Código privado · projeto de trabalho')).toBeInTheDocument()
+    expect(within(panel).queryByRole('link', { name: /Ver código/ })).toBeNull()
   })
 })

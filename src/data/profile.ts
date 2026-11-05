@@ -15,6 +15,7 @@ export type Job = {
 
 export type Project = {
   slug: string
+  kind: 'trabalho' | 'pessoal'
   name: string
   status: string
   summary: string
@@ -22,7 +23,7 @@ export type Project = {
   flow: string[]
   flowCore?: number
   stack: string[]
-  repo: string
+  repo?: string // ausente em projeto de trabalho (código privado)
   site?: string
   image?: { src: string; alt: string }
 }
@@ -113,9 +114,73 @@ export const jobs: Job[] = [
 
 export const projects: Project[] = [
   {
+    slug: 'medidor',
+    kind: 'trabalho',
+    name: 'Leitura de medidor',
+    status: 'Trabalho · setor elétrico · em validação',
+    summary: 'Lê um medidor de energia analógico a partir de uma foto e devolve os quatro dígitos com o grau de confiança.',
+    highlights: [
+      'Triagem antes de ler: um YOLOv8 identifica o tipo de medidor (ponteiro, digital ou ciclométrico) e recorta o visor.',
+      'Recusa foto ilegível em vez de chutar: avalia nitidez, brilho, contraste e tamanho do medidor no enquadramento e diz o motivo.',
+      'Um modelo de pose acha o ponteiro de cada mostrador; o ângulo vira dígito pela regra regulatória, tratando os mostradores que giram ao contrário.',
+      'Acerto por etapa em teste independente: 99,5% ao localizar os mostradores, 95,8% ao achar o ponteiro e 96,6% ao reconhecer o tipo. A leitura completa ainda vai ser medida no piloto.',
+    ],
+    flow: ['Foto', 'Tipo · YOLOv8', 'Legibilidade', 'Ponteiro · pose', 'Regra', 'Leitura'],
+    flowCore: 3,
+    stack: ['Python', 'YOLOv8', 'PyTorch', 'OpenCV', 'FastAPI'],
+  },
+  {
+    slug: 'assistente-rag',
+    kind: 'trabalho',
+    name: 'Assistente RAG',
+    status: 'Trabalho · multi-cliente',
+    summary: 'Assistente que tira dúvidas de procedimento respondendo só com base nos documentos indexados.',
+    highlights: [
+      'Toda afirmação cita a fonte: um número que abre o documento no trecho exato; em vídeo, a citação leva ao ponto do vídeo.',
+      'Escopo fechado: pedido de código, redação ou tradução é bloqueado antes de chegar ao modelo.',
+      'Indexa apresentações, textos e vídeos em filas (BullMQ); busca por similaridade no pgvector.',
+      'Isolamento por cliente: login pelo LDAP da empresa, e documentos, conversas e usuários separados por cliente, inclusive na busca vetorial.',
+    ],
+    flow: ['Documentos', 'Fila de indexação', 'pgvector · por cliente', 'LLM', 'Resposta com fonte'],
+    flowCore: 2,
+    stack: ['NestJS', 'PostgreSQL', 'pgvector', 'BullMQ', 'Redis', 'MinIO', 'React'],
+  },
+  {
+    slug: 'plataforma-dados',
+    kind: 'trabalho',
+    name: 'Plataforma de dados',
+    status: 'Trabalho · setor elétrico',
+    summary: 'ELT que junta dados de leitura vindos de SFTP e SAP e publica indicadores auditáveis para a operação.',
+    highlights: [
+      'Extração incremental e idempotente: arquivos e lotes já processados ficam registrados em DuckDB.',
+      'Automação do SAP GUI e da VPN, com o segundo fator de autenticação confirmado pelo Telegram.',
+      'Control plane com DAG, status e leases: o trabalho de banco roda numa VM e o de SAP num runner Windows.',
+      'Quality gates antes de publicar os fatos no SQL Server, consumidos por um painel em React.',
+    ],
+    flow: ['SFTP · SAP', 'DuckDB', 'Quality gates', 'SQL Server', 'Painel'],
+    flowCore: 2,
+    stack: ['Python', 'FastAPI', 'DuckDB', 'SQL Server', 'pandas', 'React'],
+  },
+  {
+    slug: 'distribuidor',
+    kind: 'trabalho',
+    name: 'Distribuidor de casos',
+    status: 'Trabalho · call center',
+    summary: 'Distribui casos para operadores por fila e acompanha o prazo de cada tratativa.',
+    highlights: [
+      'O operador puxa o próximo caso: primeiro retoma o que já estava em andamento, depois busca só na fila dele.',
+      'Prazos por área: casos no prazo, atrasados e em verificação aparecem separados.',
+      'Importação de bases por planilha e histórico de cada atribuição e tratativa.',
+    ],
+    flow: ['Planilha', 'Filas', 'Operador', 'Tratativa', 'Histórico'],
+    flowCore: 1,
+    stack: ['NestJS', 'Prisma', 'PostgreSQL', 'JWT', 'React'],
+  },
+  {
     slug: 'motionfy',
+    kind: 'pessoal',
     name: 'Motionfy',
-    status: 'No ar · 2026',
+    status: 'Pessoal · no ar',
     summary: 'Conecta ao Last.fm e traduz o que você escuta em humor, dia após dia. Dá para comparar com amigos.',
     highlights: [
       'Cada música vira um vetor emocional de 10 dimensões, classificado por IA a partir de gênero (MusicBrainz), BPM (Deezer) e trecho da letra (LRCLIB).',
@@ -125,15 +190,16 @@ export const projects: Project[] = [
     ],
     flow: ['Last.fm', 'Enriquecimento', 'IA · vetor 10D', 'Jornada', 'Spotify'],
     flowCore: 2,
-    stack: ['NestJS', 'Prisma', 'PostgreSQL', 'BullMQ', 'Redis', 'OpenAI'],
+    stack: ['NestJS', 'Prisma', 'PostgreSQL', 'BullMQ', 'Redis', 'OpenAI', 'Next.js'],
     repo: 'https://github.com/olvvikitor/motionfy',
     site: 'https://motionfy.fun/login',
     image: { src: '/projects/motionfy.jpg', alt: 'Tela de entrada do Motionfy: "O que você escuta diz como você se sente."' },
   },
   {
     slug: 'rag',
+    kind: 'pessoal',
     name: 'RAG do zero',
-    status: 'Estudo · 2026',
+    status: 'Pessoal · estudo',
     summary: 'Pipeline de RAG montado sem framework, para entender cada etapa da busca.',
     highlights: [
       'BM25 implementado à mão (k1 = 1,5; b = 0,75).',
@@ -146,49 +212,19 @@ export const projects: Project[] = [
     repo: 'https://github.com/olvvikitor/estudo_rag',
   },
   {
-    slug: 'dr-autoparts',
-    name: 'DR Autoparts',
-    status: 'API · 2025',
-    summary: 'API de e-commerce de autopeças.',
+    slug: 'estampa',
+    kind: 'pessoal',
+    name: 'Estampa',
+    status: 'Pessoal',
+    summary: 'Gera arte para camiseta, adesivo e pôster em estilos de traço definidos, como linha clara e xilogravura.',
     highlights: [
-      'Catálogo de peças por modelo de veículo e fornecedor.',
-      'Carrinho e painel administrativo com autenticação JWT.',
-      'Imagens dos produtos no S3; documentação em Swagger.',
+      'Cada estilo descreve o traço inteiro e o que evitar, e vira o prompt da OpenAI Images; aceita imagem de referência.',
+      'Fundo transparente mesmo quando o modelo não entrega: gera sobre cor lisa e remove só a cor que encosta na borda.',
+      'Sem banco: cada arte fica salva como PNG com um JSON ao lado.',
     ],
-    flow: ['Cliente', 'API Nest', 'Prisma', 'PostgreSQL · S3'],
-    flowCore: 1,
-    stack: ['NestJS', 'Prisma', 'PostgreSQL', 'AWS S3', 'Swagger'],
-    repo: 'https://github.com/olvvikitor/dr_autoparts_backend',
-  },
-  {
-    slug: 'anjo-bom',
-    name: 'Anjo Bom',
-    status: 'API · 2024',
-    summary: 'Plataforma de doações com pontos de coleta e eventos.',
-    highlights: [
-      'Pagamento das doações via Mercado Pago.',
-      'Código de verificação do doador enviado por SMS (Twilio).',
-      'Injeção de dependência com tsyringe e Redis na infraestrutura.',
-    ],
-    flow: ['Doador', 'API', 'Mercado Pago · Twilio'],
-    flowCore: 1,
-    stack: ['Express', 'MongoDB', 'Redis', 'Mercado Pago', 'Twilio'],
-    repo: 'https://github.com/olvvikitor/anjo_bom_backside',
-  },
-  {
-    slug: 'bet-scraper',
-    name: 'Bet Scraper',
-    status: 'Automação · 2026',
-    summary: 'Extrai os dados das apostas marcadas num grupo do Telegram.',
-    highlights: [
-      'Telethon lê as mensagens marcadas no grupo.',
-      'Regex no texto + GPT Vision na imagem para tirar evento, mercado e odd.',
-      'Saída em JSON e CSV.',
-    ],
-    flow: ['Telegram', 'Regex + GPT Vision', 'JSON / CSV'],
-    flowCore: 1,
-    stack: ['Python', 'Telethon', 'GPT Vision'],
-    repo: 'https://github.com/olvvikitor/botbet',
+    flow: ['Pedido', 'Prompt por estilo', 'OpenAI Images', 'Recorte do fundo', 'PNG'],
+    flowCore: 2,
+    stack: ['Next.js', 'TypeScript', 'OpenAI', 'sharp'],
   },
 ]
 

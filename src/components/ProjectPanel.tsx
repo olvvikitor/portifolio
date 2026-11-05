@@ -23,10 +23,16 @@ export function ProjectPanel({ project: p }: { project: Project }) {
               <ArrowUpRight />
             </a>
           )}
-          <a className="link" href={p.repo} target="_blank" rel="noreferrer">
-            Ver código
-            <ArrowUpRight />
-          </a>
+          {p.repo ? (
+            <a className="link" href={p.repo} target="_blank" rel="noreferrer">
+              Ver código
+              <ArrowUpRight />
+            </a>
+          ) : (
+            <p className="meta">
+              {p.kind === 'trabalho' ? 'Código privado · projeto de trabalho' : 'Código ainda não publicado'}
+            </p>
+          )}
         </div>
       </div>
       <div className="panel-media">
