@@ -3,6 +3,7 @@ import type { Project } from '../data/profile'
 import { useFloating } from '../hooks/useFloating'
 import { FlowDiagram } from './FlowDiagram'
 import { ArrowUpRight } from './icons'
+import { ImageZoom } from './ImageZoom'
 import { Stack } from './Section'
 
 // Um projeto da lista: texto à esquerda, imagem/fluxo numa moldura à direita.
@@ -12,9 +13,6 @@ export function ProjectPanel({ project: p, number }: { project: Project; number?
   const articleRef = useRef<HTMLElement>(null)
   const frameRef = useRef<HTMLDivElement>(null)
   const floating = useFloating(frameRef, articleRef)
-  const img = p.image && (
-    <img src={p.image.src} alt={p.image.alt} width={p.image.width} height={p.image.height} loading="lazy" />
-  )
 
   return (
     <article ref={articleRef} id={`projetos/${p.slug}`} className="project" aria-labelledby={titleId}>
@@ -71,15 +69,8 @@ export function ProjectPanel({ project: p, number }: { project: Project; number?
         </div>
       </div>
 
-      <div ref={frameRef} className={['frame', !img && 'frame-flow', floating && 'is-floating'].filter(Boolean).join(' ')}>
-        {img &&
-          (p.site ? (
-            <a className="shot" href={p.site} target="_blank" rel="noreferrer" tabIndex={-1}>
-              {img}
-            </a>
-          ) : (
-            <div className="shot">{img}</div>
-          ))}
+      <div ref={frameRef} className={['frame', !p.image && 'frame-flow', floating && 'is-floating'].filter(Boolean).join(' ')}>
+        {p.image && <ImageZoom image={p.image} label={p.name} />}
         <FlowDiagram steps={p.flow} core={p.flowCore} />
       </div>
     </article>

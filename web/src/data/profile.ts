@@ -184,7 +184,7 @@ export const projects: Project[] = [
     stack: ['NestJS', 'Prisma', 'PostgreSQL', 'BullMQ', 'Redis', 'OpenAI', 'Next.js'],
     repo: 'https://github.com/olvvikitor/motionfy',
     site: 'https://motionfy.fun/login',
-    image: { src: '/projects/motionfy.jpg', alt: 'Tela de entrada do Motionfy: "O que você escuta diz como você se sente."', width: 1523, height: 784 },
+    image: { src: '/projects/motionfy.jpg', alt: 'Perfil no Motionfy: playlist "paz" com capa ilustrada, estatísticas de humores e músicas, e o humor das últimas 24 horas.', width: 1475, height: 568 },
   },
   {
     slug: 'estampa',
@@ -205,7 +205,7 @@ export const projects: Project[] = [
     ],
     flowCore: 3,
     stack: ['Next.js', 'TypeScript', 'OpenAI', 'sharp'],
-    image: { src: '/projects/estampa.jpg', alt: 'Tela do Estampa: escolha de estilo à esquerda, arte gerada e galeria à direita.', width: 1536, height: 735 },
+    image: { src: '/projects/estampa.jpg', alt: 'Tela do Estampa: escolha de estilo à esquerda, arte gerada e galeria à direita.', width: 1232, height: 690 },
   },
 ]
 

@@ -47,3 +47,9 @@ export const Check = () => (
     <path d="m5 12 5 5 9-10" />
   </svg>
 )
+
+export const Expand = () => (
+  <svg {...base}>
+    <path d="M14 4h6v6M10 20H4v-6M20 4l-6 6M4 20l6-6" />
+  </svg>
+)
