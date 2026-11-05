@@ -61,7 +61,7 @@ Os textos finais podem ser enxugados na implementação, mas não podem afirmar 
 
 - Tokens atuais mantidos (claro/escuro). Cor de destaque terracota só em detalhes: ponto de status,
   número/indicador de aba, sublinhado em hover. Botões neutros (primário = cor do texto).
-- Tipografia: Newsreader (títulos), IBM Plex Sans (texto), IBM Plex Mono (metadados).
+- Tipografia: Newsreader (títulos), IBM Plex Sans (texto), metadados também em IBM Plex Sans (sem monoespaçada: não é código).
   Título do hero ~clamp(2.75rem, 7vw, 5rem).
 - **FlowDiagram**: SVG gerado a partir de uma lista de passos; caixas com borda fina na cor do texto,
   setas finas, fonte mono, sem cor de destaque além do passo "IA"/núcleo (preenchido com a cor do texto).

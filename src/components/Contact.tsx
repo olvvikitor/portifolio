@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { profile } from '../data/profile'
-import { ArrowUpRight, Check, Copy } from './icons'
+import { ArrowUpRight, Check, Copy, Download } from './icons'
 import { Section } from './Section'
 
 export function Contact() {
@@ -17,9 +17,7 @@ export function Contact() {
   }
 
   return (
-    <Section id="contato" title="Contato">
-      <p className="contact-lead">Aberto a vagas de backend e projetos com IA aplicada.</p>
-
+    <Section id="contato" label="Contato" title="Aberto a vagas *full stack* e projetos com *IA aplicada*.">
       <div className="contact-mail">
         <span className="mail">{profile.email}</span>
         <div className="contact-actions">
@@ -42,6 +40,14 @@ export function Contact() {
             </a>
           </li>
         ))}
+        {profile.resume && (
+          <li>
+            <a className="link" href={profile.resume} download>
+              Baixar currículo
+              <Download />
+            </a>
+          </li>
+        )}
       </ul>
 
       <footer className="footer">

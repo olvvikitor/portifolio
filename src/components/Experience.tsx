@@ -1,33 +1,25 @@
-import { jobs } from '../data/profile'
-import { Section, Stack } from './Section'
+import { journey } from '../data/profile'
+import { Section } from './Section'
 
+// Trajetória em capítulos, do mais recente ao começo. Portfólio, não currículo: sem datas nem cargos formais.
 export function Experience() {
   return (
-    <Section id="experiencia" title="Experiência">
-      <ol className="timeline">
-        {jobs.map((job) => (
-          <li key={job.role + job.period} className="job">
-            <div className="job-head">
-              <h3>
-                {job.role} <span className="muted">· {job.company}</span>
-              </h3>
-              <p className="meta">
-                <time>{job.period}</time> · {job.place}
-              </p>
+    <Section id="experiencia" label="Experiência" title="Do *atendimento* ao *desenvolvimento*, sempre perto de quem usa.">
+      <ol className="journey">
+        {journey.map((c) => (
+          <li key={c.label} className="chapter">
+            <p className="chapter-label">{c.label}</p>
+            <div className="chapter-body">
+              <h3>{c.title}</h3>
+              <p className="chapter-text">{c.text}</p>
+              {c.points && (
+                <ul className="chapter-points">
+                  {c.points.map((p) => (
+                    <li key={p}>{p}</li>
+                  ))}
+                </ul>
+              )}
             </div>
-            {job.summary && <p className="job-summary">{job.summary}</p>}
-            {job.highlights && (
-              <ul className="highlights">
-                {job.highlights.map((h) => (
-                  <li key={h.title}>
-                    <p>
-                      <strong>{h.title}.</strong> {h.text}
-                    </p>
-                    <Stack items={h.stack} />
-                  </li>
-                ))}
-              </ul>
-            )}
           </li>
         ))}
       </ol>

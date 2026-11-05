@@ -1,39 +1,27 @@
+/* Sem altura mínima de tela cheia: sem a faixa de áreas, o vão ficava vazio e Projetos parecia demorar. */
 .hero {
+  padding-block: clamp(3rem, 9vh, 6rem) clamp(1rem, 3vh, 2rem);
+}
+.hero-main {
   display: grid;
   gap: 3rem;
-  padding-block: clamp(3rem, 9vh, 6rem) 4rem;
   align-items: center;
 }
 @media (min-width: 960px) {
-  .hero {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    min-height: calc(100vh - 64px);
-    padding-block: 3rem;
+  .hero-main {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
   }
 }
-.hero-status {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--accent);
-}
 .hero-name {
-  margin-top: 1.75rem;
   font-size: 1.0625rem;
   color: var(--text-secondary);
 }
 .hero-title {
-  margin-top: 0.25rem;
-  font-family: var(--font-serif);
+  margin-top: 0.375rem;
   font-weight: 600;
-  font-size: clamp(2.5rem, 5.4vw, 4.25rem);
+  font-size: clamp(2.75rem, 6vw, 4.75rem);
   line-height: 0.98;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.035em;
 }
 .hero-sub {
   margin-top: 1.25rem;

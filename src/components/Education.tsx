@@ -3,7 +3,7 @@ import { Section } from './Section'
 
 export function Education() {
   return (
-    <Section id="formacao" title="Formação">
+    <Section id="formacao" label="Formação" title="Técnico pelo SENAI, cursando *Ciência da Computação*.">
       <ul className="courses">
         {education.map((c) => (
           <li key={c.title}>

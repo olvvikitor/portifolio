@@ -1,14 +1,17 @@
 import type { ReactNode } from 'react'
+import { Emph } from './Emph'
 import { Reveal } from './Reveal'
 
-type Props = { id: string; title: string; children: ReactNode }
+// Rótulo curto e suave + título em frase (o título é o nome acessível da seção). *Trecho* = destaque.
+type Props = { id: string; label: string; title: string; children: ReactNode }
 
-export function Section({ id, title, children }: Props) {
+export function Section({ id, label, title, children }: Props) {
   return (
     <section id={id} className="section" aria-labelledby={`${id}-title`}>
       <Reveal>
+        <p className="section-label">{label}</p>
         <h2 id={`${id}-title`} className="section-title">
-          {title}
+          <Emph text={title} />
         </h2>
         {children}
       </Reveal>

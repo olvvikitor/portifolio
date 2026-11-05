@@ -14,9 +14,6 @@ export function TopBar({ active }: { active: string }) {
   return (
     <header className="topbar">
       <div className="topbar-inner">
-        <a className="brand" href="#inicio">
-          {profile.shortName}
-        </a>
         <nav aria-label="Seções" className="topnav">
           {links.map((l) => (
             <a
@@ -29,6 +26,12 @@ export function TopBar({ active }: { active: string }) {
             </a>
           ))}
         </nav>
+        {profile.available && (
+          <a className="available" href="#contato">
+            <span className="status-dot" aria-hidden="true" />
+            Disponível
+          </a>
+        )}
         <button
           type="button"
           className="btn-icon"

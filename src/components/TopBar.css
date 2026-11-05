@@ -2,37 +2,33 @@
   position: sticky;
   top: 0;
   z-index: 5;
-  background: color-mix(in srgb, var(--bg-page) 88%, transparent);
+  background: color-mix(in srgb, var(--bg-page) 90%, transparent);
   backdrop-filter: saturate(1.2) blur(8px);
   border-bottom: 1px solid var(--border);
   padding-top: env(safe-area-inset-top, 0px);
 }
 .topbar-inner {
-  max-width: 1160px;
+  max-width: 1240px;
   margin: 0 auto;
   padding-inline: clamp(1.25rem, 4vw, 3rem);
   height: 64px;
   display: flex;
   align-items: center;
-  gap: 2rem;
-}
-.brand {
-  margin-right: auto;
-  font-family: var(--font-serif);
-  font-weight: 600;
-  font-size: 1.25rem;
-  text-decoration: none;
+  gap: 1rem;
 }
 .topnav {
   display: flex;
   gap: 0.25rem;
+  margin-right: auto;
+  margin-left: -0.75rem; /* alinha o texto do primeiro link com a margem da página */
 }
 .topnav a {
   padding: 0.5rem 0.75rem;
   border-radius: 6px;
   text-decoration: none;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 0.9375rem;
+  font-weight: 500;
   text-underline-offset: 6px;
 }
 .topnav a:hover {
@@ -43,10 +39,52 @@
   color: var(--text-primary);
   font-weight: 600;
   text-decoration: underline;
-  text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px;
+}
+
+/* Pílula de disponibilidade: leva ao contato. */
+.available {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 40px;
+  padding: 0 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-medium);
+  background: var(--bg-raised);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+.available:hover {
+  background: var(--tint-strong);
+}
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ok);
+}
+
+/* Tablet: sem a pílula. */
+@media (max-width: 899px) {
+  .available {
+    display: none;
+  }
 }
 @media (max-width: 639px) {
+  .topbar-inner {
+    gap: 0.5rem;
+  }
   .topnav {
-    display: none;
+    margin-left: -0.5rem;
+  }
+  .topnav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 0.5rem;
+    font-size: 0.875rem;
   }
 }

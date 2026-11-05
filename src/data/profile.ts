@@ -2,26 +2,28 @@
 
 export type Link = { label: string; href: string }
 
-export type Highlight = { title: string; text: string; stack: string[] }
 
-export type Job = {
-  role: string
-  company: string
-  place: string
-  period: string
-  summary?: string
-  highlights?: Highlight[]
+// Experiência contada como trajetória (portfólio, não currículo): sem datas, cargos formais ou modelo de trabalho.
+export type Chapter = {
+  label: string // momento, curto: "Hoje", "Antes", "Onde começou"
+  title: string // frase sobre o que aprendeu/faz, não o cargo
+  text: string
+  points?: string[] // o que entrega, em frases curtas
 }
+
+export type FlowStep = { step: string; detail?: string }
 
 export type Project = {
   slug: string
-  kind: 'trabalho' | 'pessoal'
+  tag: string // o que o projeto faz, em 1–3 palavras e único na lista (ex.: "Visão computacional")
   name: string
-  status: string
+  context?: string // para quem/onde, curto (ex.: "Setor elétrico"). Vazio = não aparece.
   summary: string
+  role?: string // o que você fez: "backend sozinho", "liderei a API, time de 3"
+  outcome?: string // impacto medido: usuários, tempo poupado, volume. Vazio = não aparece.
   highlights: string[]
-  flow: string[]
-  flowCore?: number
+  flow: FlowStep[] // "Como funciona": etapas em ordem, cada uma com uma frase curta
+  flowCore?: number // índice da etapa principal (onde está a parte difícil)
   stack: string[]
   repo?: string // ausente em projeto de trabalho (código privado)
   site?: string
@@ -30,94 +32,75 @@ export type Project = {
 
 export type Course = { title: string; school: string; place: string; period: string }
 
-export const profile = {
+export const profile: {
+  name: string
+  headline: string
+  specialties: string
+  available: boolean // mostra a pílula "Disponível" no topo
+  about: string
+  email: string
+  resume?: string // ex.: '/curriculo.pdf' (arquivo em public/). Vazio = o link não aparece.
+  links: Link[]
+} = {
   name: 'João Victor Jesus de Oliveira',
-  shortName: 'João Victor',
-  headline: 'Desenvolvedor backend',
-  specialties: 'APIs, RAG e visão computacional. NestJS, Python e PostgreSQL.',
-  status: 'Porto Alegre · remoto · disponível',
+  headline: 'Desenvolvedor *full stack*', // *trecho* = destaque condensado
+  specialties: 'Crio sistemas web completos e uso inteligência artificial para resolver problemas reais.',
+  available: true,
   about:
-    'Formado técnico em Desenvolvimento de Sistemas pelo SENAI e cursando Ciência da Computação na UNIFACS. Trabalho com sistemas web de ponta a ponta, com foco em APIs, modelagem e integração de bancos de dados, e venho me aprofundando em arquitetura, infraestrutura e aplicações de IA.',
+    'Gosto de pegar uma tarefa repetitiva ou confusa do dia a dia e transformar em algo que funciona sozinho. Penso no sistema inteiro, do dado que entra à tela que a pessoa usa, e hoje estudo arquitetura de sistemas para construir coisas que aguentem crescer.',
   email: 'victoroloveira.3002@gmail.com',
   links: [
     { label: 'GitHub', href: 'https://github.com/olvvikitor' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/jo%C3%A3o-victor-oliveira-969a15210' },
-  ] satisfies Link[],
+  ],
 }
 
-export const skills: { group: string; items: string[] }[] = [
-  { group: 'Backend', items: ['Node.js', 'NestJS', 'TypeScript', 'Python', 'FastAPI', 'APIs REST', 'JWT'] },
-  { group: 'Dados', items: ['PostgreSQL', 'Redis', 'Oracle', 'SQL', 'Prisma', 'PySpark', 'Power BI', 'DAX'] },
-  { group: 'IA', items: ['RAG', 'LLMs / OpenAI', 'pgvector', 'YOLOv8', 'OpenCV', 'Whisper'] },
-  { group: 'Infra', items: ['Docker', 'AWS', 'BullMQ', 'MinIO', 'Prefect', 'Git'] },
-  { group: 'Frontend', items: ['React', 'TypeScript'] },
+// "Como eu trabalho" (seção Sobre): forma de pensar, sem citar projeto específico. Linguagem simples.
+export const principles: { title: string; text: string }[] = [
+  {
+    title: 'Melhor admitir que não sabe do que inventar',
+    text: 'Sistema confiável avisa quando não tem certeza. Prefiro uma resposta honesta a uma resposta bonita e errada.',
+  },
+  {
+    title: 'Medir antes de dizer que funciona',
+    text: 'Impressão engana. Antes de chamar algo de pronto, testo com casos novos e olho os números, não só a demonstração.',
+  },
+  {
+    title: 'Entender a rotina antes de programar',
+    text: 'O pedido raramente é o problema inteiro. Escuto quem vai usar e acompanho o dia a dia antes de escrever a primeira linha.',
+  },
 ]
 
-export const jobs: Job[] = [
+export const journey: Chapter[] = [
   {
-    role: 'Desenvolvedor full stack',
-    company: 'Tel Contact Center',
-    place: 'Porto Alegre (remoto)',
-    period: 'dez/2025 – atual',
-    summary:
-      'Desenvolvo soluções para vários clientes, com foco em automação de processos, APIs, RAG e visão computacional.',
-    highlights: [
-      {
-        title: 'Visão computacional',
-        text: 'Modelos de leitura e análise automática de imagens, hoje em uso em produção.',
-        stack: ['YOLOv8', 'Python', 'FastAPI', 'OpenCV'],
-      },
-      {
-        title: 'RAG',
-        text: 'Busca e resposta com IA generativa sobre bases de conhecimento internas.',
-        stack: ['OpenAI', 'pgvector', 'PostgreSQL'],
-      },
-      {
-        title: 'APIs',
-        text: 'APIs que integram sistemas internos e serviços de IA.',
-        stack: ['NestJS', 'TypeScript', 'PostgreSQL', 'JWT'],
-      },
-      {
-        title: 'Automação de processos',
-        text: 'Pipelines que eliminam etapas manuais e aceleram a operação.',
-        stack: ['Python', 'Prefect', 'PySpark', 'Jupyter'],
-      },
+    label: 'Hoje',
+    title: 'Construo sistemas com IA que viram rotina da operação.',
+    text: 'Na Tel Contact Center, desenvolvo de ponta a ponta para vários clientes da empresa: da ideia à tela que a equipe usa todo dia.',
+    points: [
+      'Assistentes que respondem a equipe com base nos documentos internos, citando a fonte.',
+      'Sistemas que leem e analisam fotos sozinhos.',
+      'Conexões entre os sistemas da empresa e os serviços de IA.',
+      'Automações que tiram etapas manuais do caminho.',
     ],
   },
   {
-    role: 'Analista de dados',
-    company: 'Tel Contact Center',
-    place: 'Porto Alegre',
-    period: 'dez/2024 – dez/2025',
-    summary:
-      'Apoiei as áreas de negócio da extração e tratamento de dados até os dashboards usados nas decisões.',
-    highlights: [
-      {
-        title: 'Extração e tratamento',
-        text: 'Consultas otimizadas direto nas fontes e limpeza das bases antes da análise.',
-        stack: ['SQL', 'Power Query', 'Python'],
-      },
-      {
-        title: 'Dashboards e relatórios',
-        text: 'Painéis interativos para acompanhar indicadores.',
-        stack: ['Power BI', 'DAX', 'Excel'],
-      },
-    ],
+    label: 'Antes',
+    title: 'Aprendi a decidir com dados.',
+    text: 'Como analista de dados, buscava os números direto nas fontes, organizava tudo e montava painéis para as áreas acompanharem o negócio. Daí vem o hábito de medir antes de dizer que algo funciona.',
   },
   {
-    role: 'Atendimento ao cliente',
-    company: 'Atento',
-    place: 'Brasil',
-    period: 'dez/2023 – jun/2024',
+    label: 'Onde começou',
+    title: 'Comecei do outro lado, atendendo clientes.',
+    text: 'No atendimento da Atento, vi de perto o que trava quem depende de um sistema mal feito. É isso que tento evitar em tudo que construo.',
   },
 ]
 
 export const projects: Project[] = [
   {
     slug: 'medidor',
-    kind: 'trabalho',
+    tag: 'Visão computacional',
     name: 'Leitura de medidor',
-    status: 'Trabalho · setor elétrico · em validação',
+    context: 'Setor elétrico',
     summary: 'Lê um medidor de energia analógico a partir de uma foto e devolve os quatro dígitos com o grau de confiança.',
     highlights: [
       'Triagem antes de ler: um YOLOv8 identifica o tipo de medidor (ponteiro, digital ou ciclométrico) e recorta o visor.',
@@ -125,15 +108,22 @@ export const projects: Project[] = [
       'Um modelo de pose acha o ponteiro de cada mostrador; o ângulo vira dígito pela regra regulatória, tratando os mostradores que giram ao contrário.',
       'Acerto por etapa em teste independente: 99,5% ao localizar os mostradores, 95,8% ao achar o ponteiro e 96,6% ao reconhecer o tipo. A leitura completa ainda vai ser medida no piloto.',
     ],
-    flow: ['Foto', 'Tipo · YOLOv8', 'Legibilidade', 'Ponteiro · pose', 'Regra', 'Leitura'],
+    flow: [
+      { step: 'Tira a foto', detail: 'Basta uma foto do relógio de luz.' },
+      { step: 'Reconhece o medidor', detail: 'Descobre sozinho que tipo de medidor é e foca só no visor.' },
+      { step: 'Confere a foto', detail: 'Foto ruim não passa: o sistema diz o motivo em vez de chutar um número.' },
+      { step: 'Lê os ponteiros', detail: 'Encontra o ponteiro de cada mostrador, um por um.' },
+      { step: 'Aplica a norma', detail: 'Converte cada posição em número, até nos mostradores que giram ao contrário.' },
+      { step: 'Entrega a leitura', detail: 'Os quatro dígitos prontos, junto com o quanto o sistema tem certeza.' },
+    ],
     flowCore: 3,
     stack: ['Python', 'YOLOv8', 'PyTorch', 'OpenCV', 'FastAPI'],
   },
   {
     slug: 'assistente-rag',
-    kind: 'trabalho',
+    tag: 'Assistente com IA',
     name: 'Assistente RAG',
-    status: 'Trabalho · multi-cliente',
+    context: 'Multi-cliente',
     summary: 'Assistente que tira dúvidas de procedimento respondendo só com base nos documentos indexados.',
     highlights: [
       'Toda afirmação cita a fonte: um número que abre o documento no trecho exato; em vídeo, a citação leva ao ponto do vídeo.',
@@ -141,46 +131,41 @@ export const projects: Project[] = [
       'Indexa apresentações, textos e vídeos em filas (BullMQ); busca por similaridade no pgvector.',
       'Isolamento por cliente: login pelo LDAP da empresa, e documentos, conversas e usuários separados por cliente, inclusive na busca vetorial.',
     ],
-    flow: ['Documentos', 'Fila de indexação', 'pgvector · por cliente', 'LLM', 'Resposta com fonte'],
+    flow: [
+      { step: 'Recebe o material', detail: 'Apresentações, textos e até vídeos: aprende com o que a empresa já tem.' },
+      { step: 'Organiza tudo', detail: 'Cada arquivo é processado em segundo plano, sem travar ninguém.' },
+      { step: 'Acha o trecho certo', detail: 'Encontra a parte exata que responde à pergunta, e cada cliente só vê o que é dele.' },
+      { step: 'Responde', detail: 'Só com base nos documentos. Nada inventado, nada fora do assunto.' },
+      { step: 'Mostra a fonte', detail: 'Cada resposta leva direto ao trecho do documento ou ao minuto do vídeo.' },
+    ],
     flowCore: 2,
     stack: ['NestJS', 'PostgreSQL', 'pgvector', 'BullMQ', 'Redis', 'MinIO', 'React'],
   },
   {
-    slug: 'plataforma-dados',
-    kind: 'trabalho',
-    name: 'Plataforma de dados',
-    status: 'Trabalho · setor elétrico',
-    summary: 'ELT que junta dados de leitura vindos de SFTP e SAP e publica indicadores auditáveis para a operação.',
-    highlights: [
-      'Extração incremental e idempotente: arquivos e lotes já processados ficam registrados em DuckDB.',
-      'Automação do SAP GUI e da VPN, com o segundo fator de autenticação confirmado pelo Telegram.',
-      'Control plane com DAG, status e leases: o trabalho de banco roda numa VM e o de SAP num runner Windows.',
-      'Quality gates antes de publicar os fatos no SQL Server, consumidos por um painel em React.',
-    ],
-    flow: ['SFTP · SAP', 'DuckDB', 'Quality gates', 'SQL Server', 'Painel'],
-    flowCore: 2,
-    stack: ['Python', 'FastAPI', 'DuckDB', 'SQL Server', 'pandas', 'React'],
-  },
-  {
     slug: 'distribuidor',
-    kind: 'trabalho',
+    tag: 'Gestão de atendimento',
     name: 'Distribuidor de casos',
-    status: 'Trabalho · call center',
+    context: 'Call center',
     summary: 'Distribui casos para operadores por fila e acompanha o prazo de cada tratativa.',
     highlights: [
       'O operador puxa o próximo caso: primeiro retoma o que já estava em andamento, depois busca só na fila dele.',
       'Prazos por área: casos no prazo, atrasados e em verificação aparecem separados.',
       'Importação de bases por planilha e histórico de cada atribuição e tratativa.',
     ],
-    flow: ['Planilha', 'Filas', 'Operador', 'Tratativa', 'Histórico'],
+    flow: [
+      { step: 'Importa os casos', detail: 'A base chega por planilha, sem digitação manual.' },
+      { step: 'Monta as filas', detail: 'Cada operador recebe o caso certo: primeiro termina o que começou, depois pega da própria fila.' },
+      { step: 'Operador pede', detail: 'Pediu o próximo caso, ele já está na tela.' },
+      { step: 'Controla o prazo', detail: 'No prazo, atrasado ou em verificação: cada área vê na hora onde agir.' },
+      { step: 'Guarda o histórico', detail: 'Quem atendeu, quando e o que foi feito fica registrado.' },
+    ],
     flowCore: 1,
     stack: ['NestJS', 'Prisma', 'PostgreSQL', 'JWT', 'React'],
   },
   {
     slug: 'motionfy',
-    kind: 'pessoal',
+    tag: 'Recomendação musical',
     name: 'Motionfy',
-    status: 'Pessoal · no ar',
     summary: 'Conecta ao Last.fm e traduz o que você escuta em humor, dia após dia. Dá para comparar com amigos.',
     highlights: [
       'Cada música vira um vetor emocional de 10 dimensões, classificado por IA a partir de gênero (MusicBrainz), BPM (Deezer) e trecho da letra (LRCLIB).',
@@ -188,7 +173,13 @@ export const projects: Project[] = [
       'Playlist "jornada": traça um caminho entre dois humores no espaço 10D e escolhe uma música por parada.',
       'Last.fm, Spotify e YouTube Music atrás de uma mesma interface; MusicBrainz respeitando 1 req/s com backoff exponencial.',
     ],
-    flow: ['Last.fm', 'Enriquecimento', 'IA · vetor 10D', 'Jornada', 'Spotify'],
+    flow: [
+      { step: 'Conecta sua conta', detail: 'Liga no Last.fm e acompanha o que você ouve, dia após dia.' },
+      { step: 'Conhece cada música', detail: 'Junta gênero, ritmo e um trecho da letra de cada faixa.' },
+      { step: 'Traduz em emoção', detail: 'A IA dá a cada música um perfil emocional com 10 dimensões.' },
+      { step: 'Traça a jornada', detail: 'Escolha dois humores e ele monta o caminho de um ao outro, música por música.' },
+      { step: 'Vira playlist', detail: 'A jornada pronta para tocar no Spotify.' },
+    ],
     flowCore: 2,
     stack: ['NestJS', 'Prisma', 'PostgreSQL', 'BullMQ', 'Redis', 'OpenAI', 'Next.js'],
     repo: 'https://github.com/olvvikitor/motionfy',
@@ -196,34 +187,23 @@ export const projects: Project[] = [
     image: { src: '/projects/motionfy.jpg', alt: 'Tela de entrada do Motionfy: "O que você escuta diz como você se sente."', width: 1523, height: 784 },
   },
   {
-    slug: 'rag',
-    kind: 'pessoal',
-    name: 'RAG do zero',
-    status: 'Pessoal · estudo',
-    summary: 'Pipeline de RAG montado sem framework, para entender cada etapa da busca.',
-    highlights: [
-      'BM25 implementado à mão (k1 = 1,5; b = 0,75).',
-      'Embeddings locais com multilingual-e5-base e similaridade de cosseno.',
-      'Busca híbrida: os dois rankings são combinados com Reciprocal Rank Fusion (k = 60).',
-    ],
-    flow: ['Documento', 'Chunks', 'BM25 + embeddings', 'RRF', 'LLM'],
-    flowCore: 3,
-    stack: ['TypeScript', 'Transformers.js', 'BM25'],
-    repo: 'https://github.com/olvvikitor/estudo_rag',
-  },
-  {
     slug: 'estampa',
-    kind: 'pessoal',
+    tag: 'Geração de imagens',
     name: 'Estampa',
-    status: 'Pessoal',
     summary: 'Gera arte para camiseta, adesivo e pôster em estilos de traço definidos, como linha clara e xilogravura.',
     highlights: [
       'Cada estilo descreve o traço inteiro e o que evitar, e vira o prompt da OpenAI Images; aceita imagem de referência.',
       'Fundo transparente mesmo quando o modelo não entrega: gera sobre cor lisa e remove só a cor que encosta na borda.',
       'Sem banco: cada arte fica salva como PNG com um JSON ao lado.',
     ],
-    flow: ['Pedido', 'Prompt por estilo', 'OpenAI Images', 'Recorte do fundo', 'PNG'],
-    flowCore: 2,
+    flow: [
+      { step: 'Faz o pedido', detail: 'Diz o tema, escolhe o estilo e, se quiser, manda uma referência.' },
+      { step: 'Define o traço', detail: 'Cada estilo tem suas regras, do que fazer ao que evitar.' },
+      { step: 'Gera a arte', detail: 'A IA desenha sobre um fundo liso.' },
+      { step: 'Tira o fundo', detail: 'Fundo transparente de verdade, mesmo quando a IA não entrega.' },
+      { step: 'Pronta para usar', detail: 'Arte em PNG para camiseta, adesivo ou pôster.' },
+    ],
+    flowCore: 3,
     stack: ['Next.js', 'TypeScript', 'OpenAI', 'sharp'],
     image: { src: '/projects/estampa.jpg', alt: 'Tela do Estampa: escolha de estilo à esquerda, arte gerada e galeria à direita.', width: 1536, height: 735 },
   },

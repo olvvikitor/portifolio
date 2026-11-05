@@ -36,6 +36,12 @@ export const Copy = () => (
   </svg>
 )
 
+export const Download = () => (
+  <svg {...base}>
+    <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
+  </svg>
+)
+
 export const Check = () => (
   <svg {...base}>
     <path d="m5 12 5 5 9-10" />

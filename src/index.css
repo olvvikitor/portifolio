@@ -1,35 +1,42 @@
 /* ---------- Tokens ---------- */
+/* Neutros quase sem matiz (referência: blunar.cz). Cor só em pontos pequenos (ex.: "Disponível"). */
 :root {
-  --bg-page: #f6f4ef;
-  --bg-raised: #fbfaf7;
-  --tint: rgba(28, 25, 20, 0.04);
-  --tint-strong: rgba(28, 25, 20, 0.08);
-  --text-primary: #1c1914;
-  --text-secondary: #57524a;
-  --text-muted: #6f695f;
-  --border: rgba(28, 25, 20, 0.1);
-  --border-medium: rgba(28, 25, 20, 0.2);
-  --accent: #b4532a; /* só em detalhes pequenos */
+  --bg-page: #fafaf9;
+  --bg-raised: #ffffff; /* pílulas e nós sobre a moldura */
+  --bg-sunken: #efefed; /* moldura das imagens */
+  --tint: rgba(36, 36, 34, 0.04);
+  --tint-strong: rgba(36, 36, 34, 0.08);
+  --text-primary: #242422;
+  --text-secondary: #55554f;
+  --text-muted: #6b6b65; /* ≥ 4.5:1 sobre a página e a moldura */
+  --border: rgba(36, 36, 34, 0.1);
+  --border-medium: rgba(36, 36, 34, 0.2);
+  --ok: #23905f; /* "Disponível" */
 
-  --font-serif: 'Newsreader', Georgia, 'Times New Roman', serif;
-  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+  /* Uma família só: grotesca com eixo óptico (títulos ganham caráter, texto continua legível). */
+  --font-sans: 'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Sombra só para elevação real: a moldura que acompanha a rolagem. */
+  --shadow-float: 0 18px 40px -24px rgba(36, 36, 34, 0.35), 0 4px 10px -6px rgba(36, 36, 34, 0.12);
 
   --radius: 10px;
   color-scheme: light;
 }
 
 :root[data-theme='dark'] {
-  --bg-page: #15130f;
-  --bg-raised: #1c1a15;
-  --tint: rgba(240, 235, 225, 0.05);
-  --tint-strong: rgba(240, 235, 225, 0.1);
-  --text-primary: #ece8df;
-  --text-secondary: #b3ada2;
-  --text-muted: #948e83;
-  --border: rgba(240, 235, 225, 0.1);
-  --border-medium: rgba(240, 235, 225, 0.22);
-  --accent: #e08a5f;
+  --bg-page: #131312;
+  --bg-raised: #222220;
+  --bg-sunken: #1b1b1a;
+  --tint: rgba(236, 236, 230, 0.05);
+  --tint-strong: rgba(236, 236, 230, 0.1);
+  --text-primary: #ebebe6;
+  --text-secondary: #b3b3ac;
+  --text-muted: #919189;
+  --border: rgba(236, 236, 230, 0.1);
+  --border-medium: rgba(236, 236, 230, 0.22);
+  --ok: #5cc493;
+  /* No escuro a sombra some; a borda clara é que mostra a elevação. */
+  --shadow-float: 0 18px 40px -20px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(236, 236, 230, 0.08);
   color-scheme: dark;
 }
 
@@ -108,7 +115,7 @@ a {
 }
 
 .meta {
-  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   font-size: 0.8125rem;
   color: var(--text-muted);
 }
@@ -191,22 +198,74 @@ a {
 
 /* ---------- Página e seções ---------- */
 .page {
-  max-width: 1160px;
+  max-width: 1240px;
   margin: 0 auto;
   padding-inline: clamp(1.25rem, 4vw, 3rem);
 }
 
 .section {
-  padding-block: 4rem;
-  border-top: 1px solid var(--border);
+  padding-block: 5rem;
+}
+
+.section-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
 }
 
 .section-title {
-  font-family: var(--font-serif);
-  font-weight: 500;
-  font-size: clamp(1.75rem, 3vw, 2.25rem);
-  letter-spacing: -0.01em;
-  margin-bottom: 1.75rem;
+  margin-top: 0.5rem;
+  margin-bottom: 2.5rem;
+  max-width: 22ch;
+  font-weight: 600;
+  font-size: clamp(1.875rem, 3.6vw, 2.75rem);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+/* Trecho agressivo nos títulos (*assim* no texto): peso máximo, largura condensada, mais apertado.
+   Mesma cor do título: o contraste vem da forma, não de cor. */
+.emph {
+  font-weight: 800;
+  font-stretch: 75%;
+  font-variation-settings: 'wdth' 75;
+  letter-spacing: -0.03em;
+}
+
+/* Moldura cinza das imagens (hero e projetos). */
+.frame {
+  display: grid;
+  gap: 1.25rem;
+  padding: clamp(1rem, 3vw, 2.5rem);
+  border-radius: 16px;
+  background: var(--bg-sunken);
+  transition: box-shadow 0.25s ease;
+}
+
+.frame.is-floating {
+  box-shadow: var(--shadow-float);
+}
+
+.shot {
+  display: block;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-medium);
+  background: var(--bg-page);
+}
+
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+a.shot {
+  transition: transform 0.2s ease;
+}
+
+a.shot:hover {
+  transform: translateY(-2px);
 }
 
 .stack {
@@ -217,8 +276,7 @@ a {
 }
 
 .stack li {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--text-secondary);
   padding: 0.125rem 0.5rem;
   border-radius: 4px;
@@ -234,78 +292,111 @@ a {
   font-size: 1.0625rem;
 }
 
-.skills {
-  margin-top: 2.25rem;
-  display: grid;
-  border-top: 1px solid var(--border);
+/* Como eu trabalho: três princípios lado a lado, só texto e uma linha em cima (sem cards). */
+.principles-title {
+  margin-top: 3rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-muted);
 }
 
-.skills-row {
+.principles {
+  margin-top: 1rem;
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.125rem;
-  padding-block: 0.75rem;
-  border-bottom: 1px solid var(--border);
+  gap: 1.75rem 2rem;
 }
-
-@media (min-width: 560px) {
-  .skills-row {
-    grid-template-columns: 7.5rem 1fr;
-    gap: 1rem;
+@media (min-width: 760px) {
+  .principles {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
-.skills dt {
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
-  color: var(--text-muted);
-  padding-top: 0.15rem;
+.principles li {
+  border-top: 1px solid var(--border-medium);
+  padding-top: 1rem;
 }
 
-.skills dd {
+.principle-num {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.principle-name {
+  margin-top: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.3;
   color: var(--text-primary);
 }
 
-/* Experiência */
-.timeline {
-  display: grid;
-  gap: 2.75rem;
-}
-
-.job-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.25rem 1rem;
-}
-
-.job-head h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-}
-
-.job-summary {
+.principle-text {
   margin-top: 0.5rem;
+  color: var(--text-secondary);
+}
+
+/* Experiência: capítulos com o momento à esquerda e a história à direita. */
+.journey {
+  display: grid;
+}
+
+.chapter {
+  display: grid;
+  grid-template-columns: minmax(7rem, 11rem) 1fr;
+  gap: 0.5rem 2rem;
+  padding-block: 2rem;
+  border-top: 1px solid var(--border);
+}
+.chapter:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.chapter-label {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  padding-top: 0.2rem;
+}
+
+.chapter-body h3 {
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  max-width: 34ch;
+}
+
+.chapter-text {
+  margin-top: 0.75rem;
   color: var(--text-secondary);
   max-width: 62ch;
 }
 
-.highlights {
-  margin-top: 1.25rem;
+.chapter-points {
+  margin-top: 1rem;
   display: grid;
-  gap: 1.25rem;
-  padding-left: 1.25rem;
-  border-left: 1px solid var(--border-medium);
-}
-
-.highlights p {
+  gap: 0.5rem;
+  max-width: 62ch;
   color: var(--text-secondary);
 }
+.chapter-points li {
+  position: relative;
+  padding-left: 1.25rem;
+}
+.chapter-points li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.75em;
+  width: 0.5rem;
+  height: 1px;
+  background: var(--text-muted);
+}
 
-.highlights strong {
-  color: var(--text-primary);
-  font-weight: 600;
+@media (max-width: 639px) {
+  .chapter {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Formação */
@@ -320,15 +411,7 @@ a {
 }
 
 /* Contato */
-.contact-lead {
-  font-family: var(--font-serif);
-  font-size: clamp(1.375rem, 3vw, 1.75rem);
-  line-height: 1.3;
-  max-width: 24ch;
-}
-
 .contact-mail {
-  margin-top: 1.75rem;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -336,7 +419,6 @@ a {
 }
 
 .mail {
-  font-family: var(--font-mono);
   font-size: 0.9375rem;
   word-break: break-all;
 }

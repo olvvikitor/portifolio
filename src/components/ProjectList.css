@@ -1,0 +1,258 @@
+/* ---------- Índice ---------- */
+.index {
+  margin-bottom: 1rem;
+}
+.index-list {
+  display: grid;
+  border-top: 1px solid var(--border);
+}
+@media (min-width: 720px) {
+  .index-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(var(--rows), auto);
+    grid-auto-flow: column; /* 01–04 na 1ª coluna, 05–07 na 2ª */
+    column-gap: 3rem;
+  }
+}
+.index-list li {
+  border-bottom: 1px solid var(--border);
+}
+.index-list a {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 48px;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+.index-list a:hover {
+  background: var(--tint);
+}
+.index-list a:hover .index-name {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--border-medium);
+}
+.index-num {
+  width: 1.5rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+.index-name {
+  flex: 1;
+  font-weight: 500;
+}
+.index-tag {
+  margin-right: 0.25rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  text-align: right;
+}
+/* Linha "outros projetos internos": não é link, fica suave. */
+.index-more {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 48px;
+  color: var(--text-muted);
+}
+
+/* ---------- Projetos ---------- */
+.projects {
+  margin-top: 3rem;
+}
+.project {
+  display: grid;
+  gap: 1.75rem;
+  padding-block: 2.5rem;
+  border-top: 1px solid var(--border);
+}
+@media (min-width: 900px) {
+  .project {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 3.5rem;
+    align-items: start;
+  }
+  .project .frame {
+    position: sticky;
+    top: 88px;
+  }
+}
+.project-text {
+  display: flex;
+  flex-direction: column;
+}
+.project-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.project-tag {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.project-num {
+  color: var(--text-muted);
+  margin-right: 0.25rem;
+}
+.project-title {
+  margin-top: 0.5rem;
+  font-weight: 600;
+  font-size: clamp(1.625rem, 2.6vw, 2rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.project-summary {
+  margin-top: 0.75rem;
+  font-size: 1.0625rem;
+  color: var(--text-primary);
+  max-width: 52ch;
+}
+.project-facts {
+  margin-top: 1.25rem;
+  display: grid;
+  gap: 0.5rem;
+}
+.project-facts div {
+  display: grid;
+  gap: 0.125rem;
+}
+@media (min-width: 560px) {
+  .project-facts div {
+    grid-template-columns: 6.5rem 1fr;
+    gap: 1rem;
+  }
+}
+.project-facts dt {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  padding-top: 0.1rem;
+}
+.project-facts dd {
+  font-weight: 500;
+}
+.project-highlights {
+  margin-top: 1.25rem;
+  display: grid;
+  gap: 0.75rem;
+  color: var(--text-secondary);
+  max-width: 60ch;
+}
+.project-highlights li {
+  position: relative;
+  padding-left: 1rem;
+}
+.project-highlights li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 5px;
+  height: 1px;
+  background: var(--text-muted);
+}
+.project-links {
+  margin-top: 1.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Projeto sem imagem: o fluxo ocupa a moldura. */
+.frame-flow {
+  min-height: 240px;
+  align-content: center;
+}
+
+/* ---------- Como funciona ---------- */
+/* Etapas numeradas ligadas por uma linha vertical. A principal vem invertida e com rótulo. */
+.flow {
+  margin: 0;
+}
+.flow-caption {
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.flow-steps {
+  display: grid;
+}
+.flow-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  column-gap: 0.875rem;
+  padding-bottom: 1rem;
+}
+.flow-step:last-child {
+  padding-bottom: 0;
+}
+/* linha que liga um número ao próximo */
+.flow-step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 13.5px;
+  top: 28px;
+  bottom: 0;
+  width: 1px;
+  background: var(--border-medium);
+}
+.flow-num {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border-medium);
+  background: var(--bg-raised);
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
+.flow-body {
+  padding-top: 0.2rem;
+}
+.flow-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.625rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.flow-detail {
+  margin-top: 0.125rem;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+.flow-tag {
+  font-size: 0.75rem;
+  font-weight: 500;
+  opacity: 0.75;
+}
+.is-core .flow-num {
+  background: var(--text-primary);
+  border-color: var(--text-primary);
+  color: var(--bg-page);
+}
+.is-core .flow-body {
+  margin: -0.25rem 0 0.25rem;
+  padding: 0.5rem 0.875rem 0.625rem;
+  border-radius: 10px;
+  background: var(--text-primary);
+  color: var(--bg-page);
+}
+.is-core .flow-detail {
+  color: inherit;
+  opacity: 0.8;
+}
+
+.more {
+  margin-top: 1rem;
+}
