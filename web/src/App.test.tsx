@@ -2,12 +2,10 @@ import { act, render } from '@testing-library/react'
 import { expect, it, vi } from 'vitest'
 import App from './App'
 
-it('imagem do hero tem dimensões, para o link direto não parar antes de Projetos', () => {
+it('topo só com texto, sem imagem', () => {
   window.matchMedia = vi.fn().mockReturnValue({ matches: false }) as unknown as typeof window.matchMedia
   const { container } = render(<App />)
-  const img = container.querySelector('.hero img')
-  expect(img).toHaveAttribute('width')
-  expect(img).toHaveAttribute('height')
+  expect(container.querySelector('.hero img')).toBeNull()
 })
 
 it('hash #projetos/<slug> trocado sem recarregar seleciona o projeto e rola até Projetos', () => {
@@ -18,9 +16,9 @@ it('hash #projetos/<slug> trocado sem recarregar seleciona o projeto e rola até
   window.matchMedia = vi.fn().mockReturnValue({ matches: false }) as unknown as typeof window.matchMedia
   render(<App />)
   act(() => {
-    window.history.replaceState(null, '', '/#projetos/motionfy')
+    window.history.replaceState(null, '', '/#projetos/assistente-rag')
     window.dispatchEvent(new HashChangeEvent('hashchange'))
   })
   expect(scrolled).toContain('projetos')
-  expect(document.getElementById('projetos/motionfy')).not.toHaveAttribute('inert')
+  expect(document.getElementById('projetos/assistente-rag')).not.toHaveAttribute('inert')
 })

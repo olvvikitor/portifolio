@@ -13,6 +13,8 @@ export type Chapter = {
 
 export type FlowStep = { step: string; detail?: string }
 
+export type Challenge = { issue: string; fix: string }
+
 export type Project = {
   slug: string
   tag: string // o que o projeto faz, em 1–3 palavras e único na lista (ex.: "Visão computacional")
@@ -21,7 +23,10 @@ export type Project = {
   summary: string
   role?: string // o que você fez: "backend sozinho", "liderei a API, time de 3"
   outcome?: string // impacto medido: usuários, tempo poupado, volume. Vazio = não aparece.
-  highlights: string[]
+  problem: string // a dor, antes do projeto (ou a ideia, em projeto que não nasce de um problema; ver `labels`)
+  solution: string // o que o projeto faz para resolver, e com quê
+  labels?: { problem?: string; solution?: string } // padrão: "O problema" / "A solução"
+  challenges: Challenge[] // o que travou no caminho e como resolvi
   flow: FlowStep[] // "Como funciona": etapas em ordem, cada uma com uma frase curta
   flowCore?: number // índice da etapa principal (onde está a parte difícil)
   stack: string[]
@@ -132,29 +137,43 @@ export const journey: Chapter[] = [
   },
 ]
 
+// Top 3. Cada projeto conta o problema, a solução e as dificuldades (o que travou + como resolvi).
 export const projects: Project[] = [
   {
-    slug: 'medidor',
-    tag: 'Visão computacional',
-    name: 'Leitura de medidor',
-    context: 'Setor elétrico',
-    summary: 'Lê um medidor de energia analógico a partir de uma foto e devolve os quatro dígitos com o grau de confiança.',
-    highlights: [
-      'Triagem antes de ler: um YOLOv8 identifica o tipo de medidor (ponteiro, digital ou ciclométrico) e recorta o visor.',
-      'Recusa foto ilegível em vez de chutar: avalia nitidez, brilho, contraste e tamanho do medidor no enquadramento e diz o motivo.',
-      'Um modelo de pose acha o ponteiro de cada mostrador; o ângulo vira dígito pela regra regulatória, tratando os mostradores que giram ao contrário.',
-      'Acerto por etapa em teste independente: 99,5% ao localizar os mostradores, 95,8% ao achar o ponteiro e 96,6% ao reconhecer o tipo. A leitura completa ainda vai ser medida no piloto.',
+    slug: 'motionfy',
+    tag: 'Recomendação musical',
+    name: 'Motionfy',
+    summary: 'Um diário do seu humor feito a partir do que você escuta, com playlists que ganham capa própria desenhada por IA.',
+    labels: { problem: 'A ideia', solution: 'O que ele faz' },
+    problem:
+      'A música que toca ao longo do dia diz muito sobre como a gente está. O Motionfy acompanha o que você escuta pelo Last.fm e transforma isso num registro dos seus sentimentos: como foi o seu dia, como o humor mudou na semana e como ele se compara com o dos amigos.',
+    solution:
+      'Cada música ouvida ganha um perfil emocional de 10 dimensões, classificado por IA a partir do gênero (MusicBrainz), do BPM (Deezer) e de um trecho da letra (LRCLIB). Daí saem o humor dia a dia, a comparação com amigos e a playlist "jornada": um caminho no espaço 10D entre dois humores, com uma música por parada. Cada playlist ganha uma capa ilustrada exclusiva, gerada por IA a partir do humor dela.',
+    challenges: [
+      {
+        issue: 'O MusicBrainz aceita só 1 requisição por segundo, e cada conta nova chega com centenas de músicas para analisar.',
+        fix: 'A coleta roda em filas (BullMQ) que respeitam esse ritmo, com backoff exponencial quando a API recusa. A análise acontece em segundo plano e o perfil vai se completando sem travar a tela.',
+      },
+      {
+        issue: 'Com poucas músicas analisadas, o centro de cada humor ficava instável e mudava a cada faixa nova.',
+        fix: 'O centro é aprendido das músicas já classificadas, pela mediana de cada dimensão, e puxado para um perfil base enquanto há poucas. Conforme a base cresce, os dados reais passam a mandar.',
+      },
+      {
+        issue: 'Last.fm, Spotify e YouTube Music têm APIs, formatos e autenticação diferentes.',
+        fix: 'Os três ficam atrás de uma mesma interface: o resto do sistema não sabe de onde veio a música, e um serviço novo entra sem mexer na análise.',
+      },
     ],
     flow: [
-      { step: 'Tira a foto', detail: 'Basta uma foto do relógio de luz.' },
-      { step: 'Reconhece o medidor', detail: 'Descobre sozinho que tipo de medidor é e foca só no visor.' },
-      { step: 'Confere a foto', detail: 'Foto ruim não passa: o sistema diz o motivo em vez de chutar um número.' },
-      { step: 'Lê os ponteiros', detail: 'Encontra o ponteiro de cada mostrador, um por um.' },
-      { step: 'Aplica a norma', detail: 'Converte cada posição em número, até nos mostradores que giram ao contrário.' },
-      { step: 'Entrega a leitura', detail: 'Os quatro dígitos prontos, junto com o quanto o sistema tem certeza.' },
+      { step: 'Conecta sua conta', detail: 'Liga no Last.fm e acompanha o que você ouve, dia após dia.' },
+      { step: 'Conhece cada música', detail: 'Junta gênero, ritmo e um trecho da letra de cada faixa.' },
+      { step: 'Traduz em emoção', detail: 'A IA dá a cada música um perfil emocional com 10 dimensões.' },
+      { step: 'Traça a jornada', detail: 'Escolha dois humores e ele monta o caminho de um ao outro, música por música.' },
+      { step: 'Vira playlist', detail: 'A jornada pronta para tocar no Spotify, com capa desenhada pela IA.' },
     ],
-    flowCore: 3,
-    stack: ['Python', 'YOLOv8', 'PyTorch', 'OpenCV', 'FastAPI'],
+    flowCore: 2,
+    stack: ['NestJS', 'Prisma', 'PostgreSQL', 'BullMQ', 'Redis', 'OpenAI', 'Next.js'],
+    site: 'https://motionfy.fun/login',
+    image: { src: '/projects/motionfy.jpg', alt: 'Perfil no Motionfy: playlist "paz" com capa ilustrada gerada por IA e, abaixo, a música que está tocando agora com o humor detectado; à direita, estatísticas e o humor das últimas 24 horas.', width: 1628, height: 885 },
   },
   {
     slug: 'assistente-rag',
@@ -162,11 +181,23 @@ export const projects: Project[] = [
     name: 'Assistente RAG',
     context: 'Multi-cliente',
     summary: 'Assistente que tira dúvidas de procedimento respondendo só com base nos documentos indexados.',
-    highlights: [
-      'Toda afirmação cita a fonte: um número que abre o documento no trecho exato; em vídeo, a citação leva ao ponto do vídeo.',
-      'Escopo fechado: pedido de código, redação ou tradução é bloqueado antes de chegar ao modelo.',
-      'Indexa apresentações, textos e vídeos em filas (BullMQ); busca por similaridade no pgvector.',
-      'Isolamento por cliente: login pelo LDAP da empresa, e documentos, conversas e usuários separados por cliente, inclusive na busca vetorial.',
+    problem:
+      'Os procedimentos de atendimento ficam espalhados em apresentações, documentos e gravações de treinamento. Achar a regra certa no meio de um atendimento leva tempo, e a dúvida acaba indo para o supervisor.',
+    solution:
+      'Um assistente que responde só a partir dos documentos de cada cliente, com a fonte em cada afirmação. Apresentações, textos e vídeos são indexados em filas (BullMQ), os trechos são buscados por similaridade no pgvector e o login usa o LDAP da empresa.',
+    challenges: [
+      {
+        issue: 'Um modelo de linguagem responde com segurança mesmo quando o documento não diz nada sobre o assunto.',
+        fix: 'A resposta é montada só com os trechos recuperados, e cada afirmação traz um número que abre o documento no trecho exato; em vídeo, leva ao ponto do vídeo. Sem trecho que sustente, o assistente diz que não encontrou.',
+      },
+      {
+        issue: 'Vários clientes usam o mesmo sistema, e um documento aparecendo para o cliente errado seria grave.',
+        fix: 'Documentos, conversas e usuários são separados por cliente em todas as camadas, inclusive na busca vetorial, que já filtra pelo cliente antes de comparar os trechos.',
+      },
+      {
+        issue: 'Usuários pediam código, redação e tradução, tarefas fora do propósito do assistente.',
+        fix: 'Escopo fechado: esses pedidos são barrados antes de chegar ao modelo, o que mantém o foco e evita gasto à toa.',
+      },
     ],
     flow: [
       { step: 'Recebe o material', detail: 'Apresentações, textos e até vídeos: aprende com o que a empresa já tem.' },
@@ -179,69 +210,41 @@ export const projects: Project[] = [
     stack: ['NestJS', 'PostgreSQL', 'pgvector', 'BullMQ', 'Redis', 'MinIO', 'React'],
   },
   {
-    slug: 'distribuidor',
-    tag: 'Gestão de atendimento',
-    name: 'Distribuidor de casos',
-    context: 'Call center',
-    summary: 'Distribui casos para operadores por fila e acompanha o prazo de cada tratativa.',
-    highlights: [
-      'O operador puxa o próximo caso: primeiro retoma o que já estava em andamento, depois busca só na fila dele.',
-      'Prazos por área: casos no prazo, atrasados e em verificação aparecem separados.',
-      'Importação de bases por planilha e histórico de cada atribuição e tratativa.',
+    slug: 'medidor',
+    tag: 'Visão computacional',
+    name: 'Leitura de medidor',
+    context: 'Setor elétrico',
+    summary: 'Lê um medidor de energia analógico a partir de uma foto e devolve os quatro dígitos com o grau de confiança.',
+    problem:
+      'A leitura de medidores analógicos depende de uma pessoa olhando foto por foto. É lenta, sujeita a erro de digitação, e muitas fotos chegam tremidas, escuras ou tiradas de longe.',
+    solution:
+      'O sistema recebe a foto, identifica o medidor, confere se a imagem dá para ler e devolve os quatro dígitos com o grau de confiança. Um modelo de pose acha o ponteiro de cada mostrador, e o ângulo vira dígito pela regra regulatória.',
+    outcome:
+      'Acerto por etapa em teste independente: 99,5% ao localizar os mostradores, 95,8% ao achar o ponteiro e 96,6% ao reconhecer o tipo. A leitura completa ainda vai ser medida no piloto.',
+    challenges: [
+      {
+        issue: 'Existem três tipos de medidor (ponteiro, digital e ciclométrico), e cada um se lê de um jeito.',
+        fix: 'Uma triagem antes da leitura: um YOLOv8 reconhece o tipo e recorta só o visor, e cada tipo segue para a leitura certa.',
+      },
+      {
+        issue: 'Foto ruim gera uma leitura errada com cara de certa.',
+        fix: 'Antes de ler, o sistema avalia nitidez, brilho, contraste e o tamanho do medidor no enquadramento. Se a foto não passa, ele recusa e diz o motivo, em vez de chutar um número.',
+      },
+      {
+        issue: 'Mostradores vizinhos giram em sentidos opostos, e o ângulo sozinho não diz o dígito.',
+        fix: 'A conversão considera o sentido de giro de cada mostrador e aplica a regra regulatória de leitura ao transformar o ângulo em dígito.',
+      },
     ],
     flow: [
-      { step: 'Importa os casos', detail: 'A base chega por planilha, sem digitação manual.' },
-      { step: 'Monta as filas', detail: 'Cada operador recebe o caso certo: primeiro termina o que começou, depois pega da própria fila.' },
-      { step: 'Operador pede', detail: 'Pediu o próximo caso, ele já está na tela.' },
-      { step: 'Controla o prazo', detail: 'No prazo, atrasado ou em verificação: cada área vê na hora onde agir.' },
-      { step: 'Guarda o histórico', detail: 'Quem atendeu, quando e o que foi feito fica registrado.' },
-    ],
-    flowCore: 1,
-    stack: ['NestJS', 'Prisma', 'PostgreSQL', 'JWT', 'React'],
-  },
-  {
-    slug: 'motionfy',
-    tag: 'Recomendação musical',
-    name: 'Motionfy',
-    summary: 'Conecta ao Last.fm e traduz o que você escuta em humor, dia após dia. Dá para comparar com amigos.',
-    highlights: [
-      'Cada música vira um vetor emocional de 10 dimensões, classificado por IA a partir de gênero (MusicBrainz), BPM (Deezer) e trecho da letra (LRCLIB).',
-      'Os centros de cada humor são aprendidos das músicas já analisadas: mediana por dimensão, puxada para um perfil base quando há poucas.',
-      'Playlist "jornada": traça um caminho entre dois humores no espaço 10D e escolhe uma música por parada.',
-      'Last.fm, Spotify e YouTube Music atrás de uma mesma interface; MusicBrainz respeitando 1 req/s com backoff exponencial.',
-    ],
-    flow: [
-      { step: 'Conecta sua conta', detail: 'Liga no Last.fm e acompanha o que você ouve, dia após dia.' },
-      { step: 'Conhece cada música', detail: 'Junta gênero, ritmo e um trecho da letra de cada faixa.' },
-      { step: 'Traduz em emoção', detail: 'A IA dá a cada música um perfil emocional com 10 dimensões.' },
-      { step: 'Traça a jornada', detail: 'Escolha dois humores e ele monta o caminho de um ao outro, música por música.' },
-      { step: 'Vira playlist', detail: 'A jornada pronta para tocar no Spotify.' },
-    ],
-    flowCore: 2,
-    stack: ['NestJS', 'Prisma', 'PostgreSQL', 'BullMQ', 'Redis', 'OpenAI', 'Next.js'],
-    site: 'https://motionfy.fun/login',
-    image: { src: '/projects/motionfy.jpg', alt: 'Perfil no Motionfy: playlist "paz" com capa ilustrada gerada por IA e, abaixo, a música que está tocando agora com o humor detectado; à direita, estatísticas e o humor das últimas 24 horas.', width: 1628, height: 885 },
-  },
-  {
-    slug: 'estampa',
-    tag: 'Geração de imagens',
-    name: 'Estampa',
-    summary: 'Gera arte para camiseta, adesivo e pôster em estilos de traço definidos, como linha clara e xilogravura.',
-    highlights: [
-      'Cada estilo descreve o traço inteiro e o que evitar, e vira o prompt da OpenAI Images; aceita imagem de referência.',
-      'Fundo transparente mesmo quando o modelo não entrega: gera sobre cor lisa e remove só a cor que encosta na borda.',
-      'Sem banco: cada arte fica salva como PNG com um JSON ao lado.',
-    ],
-    flow: [
-      { step: 'Faz o pedido', detail: 'Diz o tema, escolhe o estilo e, se quiser, manda uma referência.' },
-      { step: 'Define o traço', detail: 'Cada estilo tem suas regras, do que fazer ao que evitar.' },
-      { step: 'Gera a arte', detail: 'A IA desenha sobre um fundo liso.' },
-      { step: 'Tira o fundo', detail: 'Fundo transparente de verdade, mesmo quando a IA não entrega.' },
-      { step: 'Pronta para usar', detail: 'Arte em PNG para camiseta, adesivo ou pôster.' },
+      { step: 'Tira a foto', detail: 'Basta uma foto do relógio de luz.' },
+      { step: 'Reconhece o medidor', detail: 'Descobre sozinho que tipo de medidor é e foca só no visor.' },
+      { step: 'Confere a foto', detail: 'Foto ruim não passa: o sistema diz o motivo em vez de chutar um número.' },
+      { step: 'Lê os ponteiros', detail: 'Encontra o ponteiro de cada mostrador, um por um.' },
+      { step: 'Aplica a norma', detail: 'Converte cada posição em número, até nos mostradores que giram ao contrário.' },
+      { step: 'Entrega a leitura', detail: 'Os quatro dígitos prontos, junto com o quanto o sistema tem certeza.' },
     ],
     flowCore: 3,
-    stack: ['Next.js', 'TypeScript', 'OpenAI', 'sharp'],
-    image: { src: '/projects/estampa.jpg', alt: 'Tela do Estampa: escolha de estilo à esquerda, arte gerada e galeria à direita.', width: 1232, height: 690 },
+    stack: ['Python', 'YOLOv8', 'PyTorch', 'OpenCV', 'FastAPI'],
   },
 ]
 

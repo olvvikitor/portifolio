@@ -3,94 +3,63 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { projects } from '../data/profile'
 import { ProjectList } from './ProjectList'
 
-const tabs = () => within(screen.getByRole('tablist', { name: 'Projetos' })).getAllByRole('tab')
-// Selecionado = o painel que não está inerte (os outros ficam empilhados, invisíveis).
-const panels = () => [...document.querySelectorAll('[role="tabpanel"]')]
-const shown = () => panels().filter((p) => !p.hasAttribute('inert')).map((p) => p.id)
+const slides = () => [...document.querySelectorAll('[aria-roledescription="slide"]')]
+const shown = () => slides().filter((s) => !s.hasAttribute('inert')).map((s) => s.id)
+const track = () => document.querySelector('.projects-track') as HTMLElement
 
 afterEach(() => window.history.replaceState(null, '', '/'))
 
 describe('ProjectList', () => {
-  it('índice numerado com uma aba por projeto; a primeira começa selecionada', () => {
+  it('carrossel com um slide por projeto, sem índice e sem botões de navegação', () => {
     render(<ProjectList projects={projects} />)
-    expect(tabs()).toHaveLength(projects.length)
-    expect(tabs()[0]).toHaveAttribute('aria-selected', 'true')
-    expect(tabs()[0]).toHaveTextContent('01')
-    expect(tabs()[0]).toHaveAttribute('aria-controls', `projetos/${projects[0].slug}`)
+    expect(screen.getByRole('region', { name: 'Projetos' })).toHaveAttribute('aria-roledescription', 'carrossel')
+    expect(slides()).toHaveLength(projects.length)
+    expect(screen.queryByRole('tablist')).toBeNull()
+    expect(screen.queryByRole('button', { name: /Próximo|anterior/i })).toBeNull()
   })
 
-  it('mostra um projeto por vez; os outros ficam empilhados no mesmo lugar, invisíveis e inertes', () => {
-    const { container } = render(<ProjectList projects={projects} />)
+  it('começa no primeiro; os outros ficam inertes', () => {
+    render(<ProjectList projects={projects} />)
     expect(shown()).toEqual([`projetos/${projects[0].slug}`])
-    for (const p of projects) expect(container.querySelector(`[id="projetos/${p.slug}"]`)).not.toBeNull()
-    const off = panels().filter((p) => p.hasAttribute('inert'))
-    expect(off).toHaveLength(projects.length - 1)
-    for (const p of off) {
-      expect(p).toHaveClass('is-off')
-      expect(p).toHaveAttribute('aria-hidden', 'true')
-    }
-    expect(container.querySelector('.projects-stack')?.children).toHaveLength(projects.length)
+    expect(slides()[1]).toHaveClass('is-off')
+    expect(slides()[1]).toHaveAttribute('aria-hidden', 'true')
   })
 
-  it('clicar numa aba mostra aquele projeto e atualiza o link direto', () => {
+  it('arrastar o trilho troca o projeto e atualiza o link direto', () => {
     render(<ProjectList projects={projects} />)
-    fireEvent.click(tabs()[2])
-    expect(tabs()[2]).toHaveAttribute('aria-selected', 'true')
-    expect(tabs()[0]).toHaveAttribute('aria-selected', 'false')
+    const el = track()
+    el.scrollLeft = 2 // no jsdom não há layout: cada slide "mede" 1px
+    fireEvent.scroll(el)
     expect(shown()).toEqual([`projetos/${projects[2].slug}`])
     expect(window.location.hash).toBe(`#projetos/${projects[2].slug}`)
+    expect(screen.getByText(`Projeto 3 de ${projects.length}: ${projects[2].name}`)).toBeInTheDocument()
   })
 
-  it('as setas passam para o próximo e o anterior, dando a volta nas pontas', () => {
-    render(<ProjectList projects={projects} />)
-    const n = projects.length
-    expect(screen.getByText(`01 / ${String(n).padStart(2, '0')}`)).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Próximo projeto' }))
-    expect(shown()).toEqual([`projetos/${projects[1].slug}`])
-    fireEvent.click(screen.getByRole('button', { name: 'Projeto anterior' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Projeto anterior' }))
-    expect(shown()).toEqual([`projetos/${projects[n - 1].slug}`])
-  })
-
-  it('teclado nas abas: setas passam e o foco acompanha', () => {
-    render(<ProjectList projects={projects} />)
-    tabs()[0].focus()
-    fireEvent.keyDown(tabs()[0], { key: 'ArrowRight' })
-    expect(tabs()[1]).toHaveFocus()
-    expect(shown()).toEqual([`projetos/${projects[1].slug}`])
+  it('pontos indicam a posição, sem ser clicáveis', () => {
+    const { container } = render(<ProjectList projects={projects} />)
+    const dots = container.querySelector('.projects-dots')!
+    expect(dots).toHaveAttribute('aria-hidden', 'true')
+    expect(dots.children).toHaveLength(projects.length)
+    expect(dots.children[0]).toHaveClass('is-current')
+    expect(within(dots as HTMLElement).queryByRole('button')).toBeNull()
   })
 
   it('abrindo com #projetos/<slug>, já começa naquele projeto', () => {
-    window.history.replaceState(null, '', `/#projetos/${projects[3].slug}`)
+    window.history.replaceState(null, '', `/#projetos/${projects[2].slug}`)
     render(<ProjectList projects={projects} />)
-    expect(shown()).toEqual([`projetos/${projects[3].slug}`])
-  })
-
-  it('projeto com imagem e sem site ainda mostra a imagem', () => {
-    render(<ProjectList projects={projects} />)
-    fireEvent.click(screen.getByRole('tab', { name: /Estampa/ }))
-    expect(screen.getByRole('img', { name: /Tela do Estampa/ })).toBeInTheDocument()
+    expect(shown()).toEqual([`projetos/${projects[2].slug}`])
   })
 
   it('projeto sem repositório: nenhum link de código e nenhum aviso sobrando', () => {
     render(<ProjectList projects={projects} />)
-    fireEvent.click(screen.getByRole('tab', { name: /Leitura de medidor/ }))
-    const medidor = screen.getByRole('tabpanel', { name: 'Leitura de medidor' }) // os outros têm aria-hidden
-    expect(within(medidor).queryByRole('link', { name: /Ver código/ })).toBeNull()
+    const medidor = document.getElementById('projetos/medidor')!
+    expect(within(medidor).queryByRole('link', { name: /Ver código/, hidden: true })).toBeNull()
     expect(within(medidor).queryByText(/Código privado|não publicado/)).toBeNull()
   })
 
   it('sem rótulos desnecessários de trabalho/pessoal ou "no ar"', () => {
     const { container } = render(<ProjectList projects={projects} />)
     expect(container.textContent).not.toMatch(/Pessoal|no ar|Trabalho ·|em validação/)
-  })
-
-  it('índice mostra o rótulo específico de cada projeto', () => {
-    render(<ProjectList projects={projects} />)
-    projects.forEach((p, i) => {
-      expect(tabs()[i]).toHaveTextContent(p.name)
-      expect(tabs()[i]).toHaveTextContent(p.tag)
-    })
   })
 
   it('cada projeto tem um rótulo diferente', () => {
@@ -101,5 +70,18 @@ describe('ProjectList', () => {
     const { container } = render(<ProjectList projects={projects} />)
     expect(container).not.toHaveTextContent(/sigilo|internos/i)
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(/seleção/i)
+  })
+
+  it('são os três projetos principais, nesta ordem', () => {
+    expect(projects.map((p) => p.slug)).toEqual(['motionfy', 'assistente-rag', 'medidor'])
+  })
+
+  it('cada projeto conta problema, solução e pelo menos uma dificuldade com a solução', () => {
+    for (const p of projects) {
+      expect(p.problem).toBeTruthy()
+      expect(p.solution).toBeTruthy()
+      expect(p.challenges.length).toBeGreaterThan(0)
+      for (const c of p.challenges) expect(c.issue && c.fix).toBeTruthy()
+    }
   })
 })

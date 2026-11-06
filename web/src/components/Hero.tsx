@@ -1,6 +1,5 @@
-import { profile, projects } from '../data/profile'
+import { profile } from '../data/profile'
 import { Emph } from './Emph'
-import { HeroCarousel } from './HeroCarousel'
 import { ArrowUpRight } from './icons'
 import './Hero.css'
 
@@ -28,8 +27,6 @@ export function Hero() {
             )}
           </div>
         </div>
-
-        <HeroCarousel projects={projects} />
       </div>
     </section>
   )

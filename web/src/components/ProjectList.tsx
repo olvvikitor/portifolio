@@ -1,98 +1,135 @@
-import { useEffect, useRef, useState } from 'react'
-import type { CSSProperties, KeyboardEvent } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import type { PointerEvent as ReactPointerEvent } from 'react'
 import type { Project } from '../data/profile'
 import { profile } from '../data/profile'
 import { readHash } from '../lib/hash'
-import { ArrowUpRight, ChevronLeft, ChevronRight } from './icons'
+import { ArrowUpRight } from './icons'
 import { ProjectPanel } from './ProjectPanel'
 import { Section } from './Section'
 import './ProjectList.css'
 
-// Um projeto por vez, para a página não ficar enorme: o índice no alto vira abas (o selecionado ganha fundo) e as
-// setas passam para o anterior/próximo. Todos ficam empilhados no mesmo lugar (só o selecionado visível), então a
-// altura é sempre a do maior projeto. Link direto (#projetos/<slug>): ao abrir ou trocar o hash, ele vira o selecionado.
+// Carrossel de projetos, sem índice e sem botões: um trilho com scroll-snap. No celular e no trackpad, arrastar já
+// funciona; com mouse, arrastar também (feito à mão abaixo); com teclado, foco no trilho e setas. A ponta do próximo
+// projeto aparece na borda, para mostrar que há mais. Os pontos embaixo só indicam a posição (não são clicáveis).
+// Cada slide tem a própria altura (sem espaço vazio no menor); o trilho acompanha a altura do slide atual, com transição.
+// Link direto (#projetos/<slug>): ao abrir ou trocar o hash, o trilho vai até aquele projeto.
 export function ProjectList({ projects }: { projects: Project[] }) {
   const github = profile.links.find((l) => l.label === 'GitHub')
-  const rows = Math.ceil(projects.length / 2) // o índice preenche coluna por coluna
   const fromHash = () => projects.findIndex((p) => readHash() === `projetos/${p.slug}`)
   const [current, setCurrent] = useState(() => Math.max(0, fromHash()))
-  const tabs = useRef<(HTMLButtonElement | null)[]>([])
+  const track = useRef<HTMLDivElement>(null)
+  const drag = useRef<{ x: number; left: number; moved: boolean } | null>(null)
 
+  // Distância entre o início de dois slides vizinhos (largura do slide + espaço).
+  const step = () => {
+    const el = track.current
+    const slides = el?.children
+    if (!el || !slides || slides.length < 2) return el?.clientWidth || 1
+    return (slides[1] as HTMLElement).offsetLeft - (slides[0] as HTMLElement).offsetLeft || el.clientWidth || 1
+  }
+  const goTo = (i: number, behavior: ScrollBehavior = 'smooth') => {
+    const next = Math.min(projects.length - 1, Math.max(0, i))
+    track.current?.scrollTo?.({ left: next * step(), behavior })
+    setCurrent(next)
+  }
+
+  // Abre no projeto do hash (sem animação) e acompanha trocas de hash sem recarregar.
   useEffect(() => {
+    const start = fromHash()
+    if (start > 0) goTo(start, 'instant')
     const onHash = () => {
       const i = fromHash()
-      if (i !== -1) setCurrent(i)
+      if (i !== -1) goTo(i)
     }
     window.addEventListener('hashchange', onHash)
     return () => window.removeEventListener('hashchange', onHash)
-  })
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- só ao montar
+  }, [])
 
-  const select = (i: number, focusTab = false) => {
-    const next = (i + projects.length) % projects.length
-    setCurrent(next)
-    // Atualiza o link direto sem rolar a página nem criar entrada no histórico.
-    window.history.replaceState(null, '', `#projetos/${projects[next].slug}`)
-    if (focusTab) tabs.current[next]?.focus()
-  }
-  // Teclado nas abas (padrão ARIA): setas passam, Home/End vão às pontas.
-  const onKey = (e: KeyboardEvent) => {
-    const keys: Record<string, number> = {
-      ArrowRight: current + 1,
-      ArrowDown: current + 1,
-      ArrowLeft: current - 1,
-      ArrowUp: current - 1,
-      Home: 0,
-      End: projects.length - 1,
+  // Altura do trilho = altura do slide atual (e acompanha se ele mudar, ex.: ao redimensionar a janela).
+  useLayoutEffect(() => {
+    const el = track.current
+    const slide = el?.children[current] as HTMLElement | undefined
+    if (!el || !slide) return
+    const fit = () => {
+      el.style.height = `${slide.offsetHeight}px`
     }
-    if (!(e.key in keys)) return
-    e.preventDefault()
-    select(keys[e.key], true)
+    fit()
+    if (typeof ResizeObserver === 'undefined') return
+    const ro = new ResizeObserver(fit)
+    ro.observe(slide)
+    return () => ro.disconnect()
+  }, [current])
+
+  // O slide atual é o mais perto da posição do trilho. Atualiza o link direto sem rolar a página nem criar histórico.
+  const onScroll = () => {
+    const el = track.current
+    if (!el) return
+    const i = Math.min(projects.length - 1, Math.max(0, Math.round(el.scrollLeft / step())))
+    if (i === current) return
+    setCurrent(i)
+    window.history.replaceState(null, '', `#projetos/${projects[i].slug}`)
+  }
+
+  // Arrastar com o mouse (toque e trackpad já rolam sozinhos). Durante o arraste o snap fica desligado; ao soltar,
+  // vai para o vizinho se passou de 15% do slide, senão volta.
+  const onPointerDown = (e: ReactPointerEvent) => {
+    if (e.pointerType !== 'mouse' || e.button !== 0 || !track.current) return
+    drag.current = { x: e.clientX, left: track.current.scrollLeft, moved: false }
+  }
+  const onPointerMove = (e: ReactPointerEvent) => {
+    const d = drag.current
+    const el = track.current
+    if (!d || !el) return
+    const dx = e.clientX - d.x
+    if (!d.moved && Math.abs(dx) < 6) return
+    if (!d.moved) {
+      d.moved = true
+      el.setPointerCapture(e.pointerId)
+      el.classList.add('is-dragging')
+    }
+    el.scrollLeft = d.left - dx
+  }
+  const onPointerUp = () => {
+    const d = drag.current
+    const el = track.current
+    drag.current = null
+    if (!d?.moved || !el) return
+    el.classList.remove('is-dragging')
+    const delta = (el.scrollLeft - d.left) / step()
+    const from = Math.round(d.left / step())
+    goTo(Math.abs(delta) > 0.15 ? from + Math.sign(delta) : from)
+    // O clique que vem logo depois do arraste não deve abrir link nem a imagem.
+    el.addEventListener('click', (ev) => ev.preventDefault(), { capture: true, once: true })
   }
 
   return (
     <Section id="projetos" label="Projetos" title="Uma seleção do que *construí* no trabalho e por conta própria.">
-      <nav aria-label="Índice de projetos" className="index">
-        <div role="tablist" aria-label="Projetos" className="index-list" style={{ '--rows': rows } as CSSProperties} onKeyDown={onKey}>
+      <section className="projects" aria-roledescription="carrossel" aria-label="Projetos">
+        <div
+          ref={track}
+          className="projects-track"
+          tabIndex={0}
+          aria-label="Projetos. Use as setas para passar."
+          onScroll={onScroll}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+        >
           {projects.map((p, i) => (
-            <button
-              key={p.slug}
-              ref={(el) => {
-                tabs.current[i] = el
-              }}
-              type="button"
-              role="tab"
-              id={`aba-${p.slug}`}
-              aria-selected={i === current}
-              aria-controls={`projetos/${p.slug}`}
-              tabIndex={i === current ? 0 : -1}
-              onClick={() => select(i)}
-            >
-              <span className="index-num">{String(i + 1).padStart(2, '0')}</span>
-              <span className="index-name">{p.name}</span>
-              <span className="index-tag">{p.tag}</span>
-            </button>
+            <ProjectPanel key={p.slug} project={p} number={i + 1} total={projects.length} off={i !== current} />
           ))}
         </div>
-      </nav>
-
-      <div className="projects">
-        <div className="project-nav">
-          <button type="button" className="btn-icon" aria-label="Projeto anterior" onClick={() => select(current - 1)}>
-            <ChevronLeft />
-          </button>
-          <span className="project-count" aria-live="polite">
-            {String(current + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}
-          </span>
-          <button type="button" className="btn-icon" aria-label="Próximo projeto" onClick={() => select(current + 1)}>
-            <ChevronRight />
-          </button>
-        </div>
-        <div className="projects-stack">
+        <div className="projects-dots" aria-hidden="true">
           {projects.map((p, i) => (
-            <ProjectPanel key={p.slug} project={p} number={i + 1} off={i !== current} />
+            <span key={p.slug} className={i === current ? 'is-current' : undefined} />
           ))}
         </div>
-      </div>
+        <p className="sr-only" aria-live="polite">
+          Projeto {current + 1} de {projects.length}: {projects[current].name}
+        </p>
+      </section>
 
       {github && (
         <a className="link more" href={`${github.href}?tab=repositories`} target="_blank" rel="noreferrer">

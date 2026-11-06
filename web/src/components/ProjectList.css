@@ -1,124 +1,108 @@
-/* ---------- Índice (abas) ---------- */
-/* Cada linha é uma aba: clicar mostra o projeto embaixo. O selecionado fica com fundo (--tint-strong). */
-.index {
-  margin-bottom: 1rem;
-}
-.index-list {
-  display: grid;
-  border-top: 1px solid var(--border);
-}
-@media (min-width: 720px) {
-  .index-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: repeat(var(--rows), auto);
-    grid-auto-flow: column; /* 01–04 na 1ª coluna, 05–07 na 2ª */
-    column-gap: 3rem;
-  }
-}
-.index-list button {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-  min-height: 48px;
-  padding: 0 0.75rem;
-  border: 0;
-  border-bottom: 1px solid var(--border);
-  border-radius: 0;
-  background: none;
-  font: inherit;
-  color: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-}
-.index-list button:hover {
-  background: var(--tint);
-}
-.index-list button:hover .index-name {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  text-decoration-color: var(--border-medium);
-}
-.index-list button[aria-selected='true'] {
-  background: var(--tint-strong);
-  cursor: default;
-}
-.index-list button[aria-selected='true'] .index-name {
-  font-weight: 600;
-  text-decoration: none;
-}
-.index-list button:focus-visible {
-  outline: 2px solid var(--text-primary);
-  outline-offset: -2px;
-}
-.index-num {
-  width: 1.5rem;
-  color: var(--text-muted);
-  font-size: 0.875rem;
-  font-variant-numeric: tabular-nums;
-}
-.index-name {
-  flex: 1;
-  font-weight: 500;
-}
-.index-tag {
-  margin-right: 0.25rem;
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  text-align: right;
-}
-
-/* ---------- Projetos ---------- */
-/* Setas entre projetos: anterior / contador / próximo, logo acima do projeto aberto. */
-.project-nav {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  padding-bottom: 1rem;
-}
-.project-count {
-  min-width: 5ch;
-  text-align: center;
-  font-size: 0.9375rem;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-secondary);
-}
+/* ---------- Projetos: carrossel ---------- */
+/* Trilho com scroll-snap, sem índice e sem botões. O slide é um pouco mais estreito que o trilho: a ponta do próximo
+   aparece à direita e avisa que dá para arrastar. Os slides ficam na mesma linha (flex), então o trilho tem a altura
+   do maior. Sem barra de rolagem: a posição aparece nos pontos embaixo. */
 .projects {
   margin-top: 2rem;
 }
-/* Todos os projetos na mesma célula do grid: a área fica com a altura do maior e não muda ao trocar de aba.
-   O não selecionado continua ocupando espaço, só que invisível (e inerte, no componente). */
-.projects-stack {
-  display: grid;
+.projects-track {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  cursor: grab;
+  align-items: flex-start; /* cada slide com a própria altura; o componente ajusta a altura do trilho ao atual */
+  overflow-y: hidden;
+  transition: height 0.35s ease;
 }
-.projects-stack > .project {
-  grid-area: 1 / 1;
+.projects-track::-webkit-scrollbar {
+  display: none;
+}
+.projects-track:focus-visible {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+/* Arrastando com o mouse: sem snap (senão o trilho briga com o arraste) e sem selecionar texto. */
+.projects-track.is-dragging {
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+  cursor: grabbing;
+  user-select: none;
+}
+.projects-track > .project {
+  flex: 0 0 calc(100% - 4rem);
+  min-width: 0;
+  scroll-snap-align: start;
+  transition: opacity 0.3s ease;
 }
 .project.is-off {
-  visibility: hidden;
+  opacity: 0.35;
+}
+.projects-track img {
+  -webkit-user-drag: none;
+}
+.projects-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.projects-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--border-medium);
+  transition: width 0.25s ease, background-color 0.25s ease;
+}
+.projects-dots .is-current {
+  width: 20px;
+  background: var(--text-secondary);
+}
+@media (prefers-reduced-motion: reduce) {
+  .projects-track {
+    scroll-behavior: auto;
+    transition: none;
+  }
+  .projects-track > .project,
+  .projects-dots span {
+    transition: none;
+  }
 }
 .project {
   display: grid;
   gap: 1.75rem;
-  padding-block: 2.5rem;
-  border-top: 1px solid var(--border);
+  padding-block: 1.5rem 2.5rem;
 }
 @media (min-width: 900px) {
+  /* Linha de cima: texto e moldura com a mesma altura (a moldura estica). Linha de baixo: dificuldades de ponta a ponta. */
   .project {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: 3.5rem;
-    align-items: start;
+    gap: 2.5rem 3.5rem;
+    align-items: stretch;
   }
-  .project .frame {
-    position: sticky;
-    top: 88px;
+  .project-challenges-block {
+    grid-column: 1 / -1;
+  }
+  .project-challenges-block .project-challenges {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2rem;
   }
 }
 .project-text {
   display: flex;
   flex-direction: column;
+}
+/* Ferramentas e links no pé da coluna: se a moldura ao lado for mais alta, a sobra fica entre o texto e o pé. */
+.project-foot {
+  margin-top: auto;
+  padding-top: 1.5rem;
+}
+.project-foot .stack {
+  margin-top: 0;
 }
 .project-meta {
   display: flex;
@@ -136,13 +120,15 @@
 .project-title {
   margin-top: 0.5rem;
   font-weight: 600;
-  font-size: clamp(1.625rem, 2.6vw, 2rem);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  font-size: clamp(2rem, 3.4vw, 2.75rem);
+  line-height: 1.08;
+  letter-spacing: -0.04em;
 }
 .project-summary {
-  margin-top: 0.75rem;
-  font-size: 1.0625rem;
+  margin-top: 0.875rem;
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.45;
   color: var(--text-primary);
   max-width: 52ch;
 }
@@ -162,32 +148,61 @@
   }
 }
 .project-facts dt {
-  font-size: 0.875rem;
-  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
   padding-top: 0.1rem;
 }
 .project-facts dd {
   font-weight: 500;
 }
-.project-highlights {
-  margin-top: 1.25rem;
-  display: grid;
-  gap: 0.75rem;
+.project-challenges-block .project-subhead {
+  margin-top: 0;
+}
+.project-challenges-block .project-challenges {
+  max-width: none;
+}
+.project-subhead {
+  margin: 1.75rem 0 0;
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.project-challenges-block .project-subhead {
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+.project-body {
+  margin-top: 0.5rem;
   color: var(--text-secondary);
   max-width: 60ch;
 }
-.project-highlights li {
-  position: relative;
-  padding-left: 1rem;
+.project-challenges {
+  margin-top: 0.5rem;
+  display: grid;
+  gap: 1rem;
+  max-width: 60ch;
 }
-.project-highlights li::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0.7em;
-  width: 5px;
-  height: 1px;
-  background: var(--text-muted);
+/* Cada dificuldade num bloco de fundo suave (no lugar do filete à esquerda, que dava cara de coluna de jornal). */
+.project-challenges li {
+  padding: 1.375rem 1.5rem;
+  border-radius: 16px;
+  background: var(--bg-sunken);
+}
+.challenge-issue {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+.challenge-fix {
+  margin-top: 0.625rem;
+  font-size: 1rem;
+  color: var(--text-secondary);
 }
 .project-links {
   margin-top: 1.75rem;
@@ -200,7 +215,30 @@
 /* Projeto sem imagem: o fluxo ocupa a moldura. */
 .frame-flow {
   min-height: 240px;
-  align-content: center;
+}
+/* Moldura esticada até a altura do texto: em vez de sobrar espaço no card, as etapas do fluxo se espalham (cada uma
+   cresce igual e a linha entre os números acompanha; a última fica no pé). */
+.project .frame {
+  display: flex;
+  flex-direction: column;
+}
+.project .flow {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.project .flow-steps {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.project .flow-step {
+  flex: 1 0 auto;
+  align-content: start;
+  align-items: start;
+}
+.project .flow-step:last-child {
+  flex: 0 0 auto;
 }
 
 /* ---------- Como funciona ---------- */
@@ -209,10 +247,11 @@
   margin: 0;
 }
 .flow-caption {
-  margin-bottom: 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 .flow-steps {
   display: grid;
@@ -259,12 +298,13 @@
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0.25rem 0.625rem;
+  font-family: var(--font-display);
   font-weight: 600;
   line-height: 1.35;
 }
 .flow-detail {
   margin-top: 0.125rem;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   line-height: 1.45;
   color: var(--text-secondary);
 }
@@ -314,17 +354,16 @@
   margin: 0;
 }
 .capability-name {
-  font-size: clamp(2.75rem, 9vw, 7rem);
-  font-weight: 800;
-  font-stretch: 75%;
-  font-variation-settings: 'wdth' 75;
-  line-height: 0.92;
-  letter-spacing: -0.015em;
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6.5vw, 5.5rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.05em;
   text-wrap: balance;
 }
 .capability-text {
-  max-width: 52ch;
-  font-size: clamp(1rem, 1.6vw, 1.1875rem);
+  max-width: 56ch;
+  font-size: clamp(1.0625rem, 1.6vw, 1.25rem);
   line-height: 1.6;
   color: var(--text-secondary);
 }
