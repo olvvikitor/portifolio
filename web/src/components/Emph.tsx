@@ -1,5 +1,4 @@
-// Títulos com trechos "agressivos": o que vem entre *asteriscos* sai em peso máximo e largura condensada
-// (mesma família, outro eixo), para dar contraste sem trazer uma segunda fonte.
+// Títulos com trechos de destaque: o que vem entre *asteriscos* sai em vermelho (--accent) e um peso acima.
 export function Emph({ text }: { text: string }) {
   return (
     <>
